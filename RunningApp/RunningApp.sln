@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunningApp", "RunningApp\RunningApp.csproj", "{6A91869D-C4DE-4DC4-B224-E9B32541E15C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D823BADB-254E-483B-A081-B0400CB42A29} = {D823BADB-254E-483B-A081-B0400CB42A29}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kaart", "Kaart\Kaart.csproj", "{D823BADB-254E-483B-A081-B0400CB42A29}"
 EndProject

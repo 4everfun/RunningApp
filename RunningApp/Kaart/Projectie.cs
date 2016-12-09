@@ -14,7 +14,7 @@ using Android.Locations;  // vanwege Location
 
 namespace Kaart
 {
-    class Projectie
+    public class Projectie
     {
         private const double fi0 = 52.15517440;
         private const double lam0 = 5.38720621;
