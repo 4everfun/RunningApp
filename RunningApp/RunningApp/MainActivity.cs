@@ -11,8 +11,9 @@ namespace RunningApp
         {
             base.OnCreate(bundle);
 
-            // Set our view from the "main" layout resource
-            // SetContentView (Resource.Layout.Main);
+            this.SetContentView(new Views.MapView(this));
+
+            //this.SetContentView(Resource.Layout.Main);
         }
     }
 }

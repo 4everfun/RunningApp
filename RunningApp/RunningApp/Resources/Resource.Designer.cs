@@ -26,10 +26,15 @@ namespace RunningApp
 		
 		public static void UpdateIdValues()
 		{
+			global::Kaart.Resource.String.ApplicationName = global::RunningApp.Resource.String.ApplicationName;
+			global::Kaart.Resource.String.Hello = global::RunningApp.Resource.String.Hello;
 		}
 		
 		public partial class Attribute
 		{
+			
+			// aapt resource value: 0x7f010000
+			public const int RunningAppItemTemplateSelector = 2130771968;
 			
 			static Attribute()
 			{
@@ -63,14 +68,17 @@ namespace RunningApp
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f050001
-			public const int button1 = 2131034113;
+			// aapt resource value: 0x7f050003
+			public const int button3 = 2131034115;
 			
 			// aapt resource value: 0x7f050000
-			public const int button2 = 2131034112;
+			public const int buttonLayout = 2131034112;
+			
+			// aapt resource value: 0x7f050001
+			public const int centerButton = 2131034113;
 			
 			// aapt resource value: 0x7f050002
-			public const int button3 = 2131034114;
+			public const int startButton = 2131034114;
 			
 			static Id()
 			{
@@ -113,6 +121,25 @@ namespace RunningApp
 			}
 			
 			private String()
+			{
+			}
+		}
+		
+		public partial class Styleable
+		{
+			
+			public static int[] Views_MapView = new int[] {
+					2130771968};
+			
+			// aapt resource value: 0
+			public const int Views_MapView_RunningAppItemTemplateSelector = 0;
+			
+			static Styleable()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Styleable()
 			{
 			}
 		}
