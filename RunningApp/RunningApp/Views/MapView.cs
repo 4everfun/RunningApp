@@ -100,6 +100,9 @@ namespace RunningApp.Views
 
         protected override void OnDraw(Canvas c)
         {
+            Paint t = new Paint();
+            t.Color = Color.Black;
+
             this.FirstDrawActions();
 
             this.CurrentMatrix = new Matrix();
@@ -107,15 +110,20 @@ namespace RunningApp.Views
             if (this.FirstDraw)
             {
                 this.CurrentMatrix.PostTranslate(this.CenterOffsetX, this.CenterOffsetY);
-            } else if (this.FirstMatrix)
-            {
-                this.CurrentMatrix.PostTranslate(this.CenterOffsetX - this.AnchorX - this.Width / 2, this.CenterOffsetY - this.AnchorY - this.Height / 2);
             } else
             {
                 float[] values = new float[9];
                 this.PreviousMatrix.GetValues(values);
 
-                this.CurrentMatrix.PostTranslate(values[Matrix.MtransX] - this.AnchorX, values[Matrix.MtransY] - this.AnchorY);
+                //Xbuitenscherm = values[Matrix.MtransX]
+                //xtotmiddenkaartinscherm = this.CenterOffsetX * -1 - xbuitenscherm
+                //anchorvanafmiddenkaart = this.AnchorX - xtotmiddenkaartinscherm + this.Width / 2
+
+                //this.CenterOffsetX - this.AnchorX - this.CenterOffsetX * -1 - values[Matrix.MtransX] + this.Width/2;
+
+                this.CurrentMatrix.PostTranslate(this.CenterOffsetX - this.AnchorX - this.CenterOffsetX * -1 - values[Matrix.MtransX] + this.Width / 2, this.CenterOffsetY - this.AnchorY - this.CenterOffsetY * -1 - values[Matrix.MtransY] + this.Height / 2);
+
+                c.DrawLine(values[Matrix.MtransX], 20, 0, 30, t);
             }
 
             this.CurrentMatrix.PostScale(this.Scale, this.Scale);
@@ -124,9 +132,12 @@ namespace RunningApp.Views
 
             c.DrawBitmap(this.Map, this.CurrentMatrix, new Paint());
 
-            Paint t = new Paint();
-            t.Color = Color.Black;
             c.DrawCircle(this.AnchorX, this.AnchorY, 50*this.Scale, t);
+
+            if (this.FirstDraw)
+            {
+                this.PreviousMatrix = this.CurrentMatrix;
+            }
 
             this.FirstDraw = false;
         }
@@ -135,6 +146,8 @@ namespace RunningApp.Views
         {
             this.ScaleDetector.OnTouchEvent(ea.Event);
         }
+
+        public bool OnPinchStarted()
 
         // Scale
         public bool OnScale(ScaleGestureDetector detector)
