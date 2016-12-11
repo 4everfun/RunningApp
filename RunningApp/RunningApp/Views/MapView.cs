@@ -102,6 +102,7 @@ namespace RunningApp.Views
         {
             Paint t = new Paint();
             t.Color = Color.Black;
+            t.StrokeWidth = 50;
 
             this.FirstDrawActions();
 
@@ -112,8 +113,8 @@ namespace RunningApp.Views
                 this.CurrentMatrix.PostTranslate(this.CenterOffsetX, this.CenterOffsetY);
             } else
             {
-                float[] values = new float[9];
-                this.PreviousMatrix.GetValues(values);
+                //float[] values = new float[9];
+                //this.PreviousMatrix.GetValues(values);
 
                 //Xbuitenscherm = values[Matrix.MtransX]
                 //xtotmiddenkaartinscherm = this.CenterOffsetX * -1 - xbuitenscherm
@@ -121,12 +122,14 @@ namespace RunningApp.Views
 
                 //this.CenterOffsetX - this.AnchorX - this.CenterOffsetX * -1 - values[Matrix.MtransX] + this.Width/2;
 
-                this.CurrentMatrix.PostTranslate(this.CenterOffsetX - this.AnchorX - this.CenterOffsetX * -1 - values[Matrix.MtransX] + this.Width / 2, this.CenterOffsetY - this.AnchorY - this.CenterOffsetY * -1 - values[Matrix.MtransY] + this.Height / 2);
+                this.CurrentMatrix.PostTranslate(this.CenterOffsetX - this.AnchorX, this.CenterOffsetY - this.AnchorY);
 
-                c.DrawLine(values[Matrix.MtransX], 20, 0, 30, t);
+                //this.CurrentMatrix.PostTranslate(this.CenterOffsetX - this.AnchorX - this.CenterOffsetX * -1 - values[Matrix.MtransX] + this.Width / 2, this.CenterOffsetY - this.AnchorY - this.CenterOffsetY * -1 - values[Matrix.MtransY] + this.Height / 2);
+
+                //c.DrawLine(values[Matrix.MtransX], 50, this.CenterOffsetX * -1 + values[Matrix.MtransX] - this.Width / 2, 60, t);
             }
 
-            this.CurrentMatrix.PostScale(this.Scale, this.Scale);
+            //this.CurrentMatrix.PostScale(this.Scale, this.Scale);
 
             this.CurrentMatrix.PostTranslate(this.Width / 2, this.Height / 2);
 
@@ -139,6 +142,10 @@ namespace RunningApp.Views
                 this.PreviousMatrix = this.CurrentMatrix;
             }
 
+            float[] values = new float[9];
+            this.PreviousMatrix.GetValues(values);
+            c.DrawLine(values[Matrix.MtransX], 50, this.CenterOffsetX * -1 + values[Matrix.MtransX], 50, t);
+
             this.FirstDraw = false;
         }
 
@@ -146,8 +153,6 @@ namespace RunningApp.Views
         {
             this.ScaleDetector.OnTouchEvent(ea.Event);
         }
-
-        public bool OnPinchStarted()
 
         // Scale
         public bool OnScale(ScaleGestureDetector detector)
