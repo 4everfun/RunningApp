@@ -12,19 +12,19 @@ namespace RunningApp.Views
         private Bitmap Map;
         private ScaleGestureDetector ScaleDetector;
         private Matrix CurrentMatrix = new Matrix();
-        private Matrix PreviousMatrix = new Matrix();
 
-        private PointF Position;
+        private float CurrentTotalOffsetX;
+        private float CurrentTotalOffsetY;
+
         private float CenterOffsetX;
         private float CenterOffsetY;
-        private float AnchorX;
-        private float AnchorY;
-        private float XYRotation = 0;
+        private float PreviousCenterX;
+        private float PreviousCenterY;
+        private float OffsetX;
+        private float OffsetY;
         private float Scale;
-        private float DefaultScale;
 
         private bool FirstDraw = true;
-        private bool FirstMatrix = true;
 
         private float MinScale;
         private float MaxScale = 5.0f;
@@ -61,6 +61,7 @@ namespace RunningApp.Views
 
         protected void SetScale(float NewScale)
         {
+            float PreviousScale = this.Scale;
             if (NewScale < this.MaxScale)
             {
                 this.Scale = NewScale;
@@ -75,12 +76,45 @@ namespace RunningApp.Views
             {
                 this.Scale = this.MaxScale;
             }
+            Console.WriteLine(this.Height);
+            Console.WriteLine(this.Map.Height);
+            Console.WriteLine(this.Map.Height * this.Scale);
         }
 
-        protected void SetAnchorPoint(PointF coords)
+        protected void SetOffset(float OffsetX, float OffsetY)
         {
-            this.AnchorX = coords.X;
-            this.AnchorY = coords.Y;
+            float ScaledOffsetX = OffsetX / this.Scale;
+            float ScaledOffsetY = OffsetY / this.Scale;
+
+            if (OffsetX != 0 || OffsetY != 0)
+            {
+                if (this.PreviousCenterX + ScaledOffsetX + this.Width / 2 / this.Scale > 0)
+                {
+                    this.PreviousCenterX = 0 - this.Width / 2 / this.Scale;
+                    ScaledOffsetX = 0;
+                }
+
+                if (this.PreviousCenterY + ScaledOffsetY + this.Height / 2 / this.Scale > 0)
+                {
+                    this.PreviousCenterY = 0 - this.Height / 2 / this.Scale;
+                    ScaledOffsetY = 0;
+                }
+
+                if (this.PreviousCenterX + ScaledOffsetX + this.Width / 2 / this.Scale - this.Width / this.Scale + this.Map.Width < 0)
+                {
+                    this.PreviousCenterX = 0 - this.Map.Width + this.Width / 2 / this.Scale;
+                    ScaledOffsetX = 0;
+                }
+
+                if (this.PreviousCenterY + ScaledOffsetY + this.Height / 2 / this.Scale - this.Height / this.Scale + this.Map.Height < 0)
+                {
+                    this.PreviousCenterY = 0 - this.Map.Height + this.Height / 2 / this.Scale;
+                    ScaledOffsetY = 0;
+                }
+            }
+
+            this.OffsetX = ScaledOffsetX;
+            this.OffsetY = ScaledOffsetY;
         }
 
         private void FirstDrawActions()
@@ -95,7 +129,11 @@ namespace RunningApp.Views
 
                 this.CenterOffsetX = this.Map.Width / 2 * -1;
                 this.CenterOffsetY = this.Map.Height / 2 * -1;
+
+                this.PreviousCenterX = this.CenterOffsetX;
+                this.PreviousCenterY = this.CenterOffsetY;
             }
+            this.FirstDraw = false;
         }
 
         protected override void OnDraw(Canvas c)
@@ -107,71 +145,63 @@ namespace RunningApp.Views
             this.FirstDrawActions();
 
             this.CurrentMatrix = new Matrix();
-
-            if (this.FirstDraw)
-            {
-                this.CurrentMatrix.PostTranslate(this.CenterOffsetX, this.CenterOffsetY);
-            } else
-            {
-                //float[] values = new float[9];
-                //this.PreviousMatrix.GetValues(values);
-
-                //Xbuitenscherm = values[Matrix.MtransX]
-                //xtotmiddenkaartinscherm = this.CenterOffsetX * -1 - xbuitenscherm
-                //anchorvanafmiddenkaart = this.AnchorX - xtotmiddenkaartinscherm + this.Width / 2
-
-                //this.CenterOffsetX - this.AnchorX - this.CenterOffsetX * -1 - values[Matrix.MtransX] + this.Width/2;
-
-                this.CurrentMatrix.PostTranslate(this.CenterOffsetX - this.AnchorX, this.CenterOffsetY - this.AnchorY);
-
-                //this.CurrentMatrix.PostTranslate(this.CenterOffsetX - this.AnchorX - this.CenterOffsetX * -1 - values[Matrix.MtransX] + this.Width / 2, this.CenterOffsetY - this.AnchorY - this.CenterOffsetY * -1 - values[Matrix.MtransY] + this.Height / 2);
-
-                //c.DrawLine(values[Matrix.MtransX], 50, this.CenterOffsetX * -1 + values[Matrix.MtransX] - this.Width / 2, 60, t);
-            }
-
-            //this.CurrentMatrix.PostScale(this.Scale, this.Scale);
-
+            
+            this.CurrentMatrix.PostTranslate(this.PreviousCenterX + this.OffsetX, this.PreviousCenterY + this.OffsetY);
+            this.CurrentMatrix.PostScale(this.Scale, this.Scale);
             this.CurrentMatrix.PostTranslate(this.Width / 2, this.Height / 2);
 
+            this.CurrentTotalOffsetX = this.PreviousCenterX + this.OffsetX;
+            this.CurrentTotalOffsetY = this.PreviousCenterY + this.OffsetY;
+
             c.DrawBitmap(this.Map, this.CurrentMatrix, new Paint());
-
-            c.DrawCircle(this.AnchorX, this.AnchorY, 50*this.Scale, t);
-
-            if (this.FirstDraw)
-            {
-                this.PreviousMatrix = this.CurrentMatrix;
-            }
-
-            float[] values = new float[9];
-            this.PreviousMatrix.GetValues(values);
-            c.DrawLine(values[Matrix.MtransX], 50, this.CenterOffsetX * -1 + values[Matrix.MtransX], 50, t);
-
-            this.FirstDraw = false;
         }
+
+        protected float DragStartX;
+        protected float DragStartY;
 
         protected void RegisterTouchEvent(object sender, TouchEventArgs ea)
         {
+            // Scale
             this.ScaleDetector.OnTouchEvent(ea.Event);
+
+            // Drag
+            if(ea.Event.PointerCount == 1)
+            {
+                switch (ea.Event.Action)
+                {
+                    case MotionEventActions.Down:
+                        this.DragStartX = ea.Event.GetX();
+                        this.DragStartY = ea.Event.GetY();
+                        break;
+                    case MotionEventActions.Move:
+                        this.SetOffset(ea.Event.GetX() - this.DragStartX, ea.Event.GetY() - this.DragStartY);
+                        break;
+                    case MotionEventActions.Up:
+                        this.PreviousCenterX = this.CurrentTotalOffsetX;
+                        this.PreviousCenterY = this.CurrentTotalOffsetY;
+                        this.SetOffset(0, 0);
+                        break;
+                }
+            }
+
+            this.Invalidate();
         }
 
         // Scale
         public bool OnScale(ScaleGestureDetector detector)
         {
-            this.SetAnchorPoint(new PointF(detector.FocusX, detector.FocusY));
             this.SetScale(this.Scale * detector.ScaleFactor);
-            this.Invalidate();
+
             return true;
         }
 
         public bool OnScaleBegin(ScaleGestureDetector detector)
         {
-            this.PreviousMatrix = this.CurrentMatrix;
             return true;
         }
 
         public void OnScaleEnd(ScaleGestureDetector detector)
         {
-            this.FirstMatrix = false;
         }
     }
 }

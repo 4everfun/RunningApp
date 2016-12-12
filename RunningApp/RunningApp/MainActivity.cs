@@ -11,9 +11,7 @@ namespace RunningApp
         {
             base.OnCreate(bundle);
 
-            this.SetContentView(new Views.MapView(this));
-
-            //this.SetContentView(Resource.Layout.Main);
+            this.SetContentView(Resource.Layout.Main);
         }
     }
 }
