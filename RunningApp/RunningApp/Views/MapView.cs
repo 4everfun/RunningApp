@@ -5,13 +5,21 @@ using Android.Views;
 
 using Android.Graphics;
 
+using Android.Locations;
+using Android.OS;
+using Android.Runtime;
+
+using Kaart;
+
 namespace RunningApp.Views
 {
-    public class MapView : View, ScaleGestureDetector.IOnScaleGestureListener
+    public class MapView : View, ScaleGestureDetector.IOnScaleGestureListener, ILocationListener
     {
         private Bitmap Map;
         private ScaleGestureDetector ScaleDetector;
         private Matrix CurrentMatrix = new Matrix();
+
+        private const float LocationThreshold = 1;
 
         private float CurrentTotalOffsetX;
         private float CurrentTotalOffsetY;
@@ -28,6 +36,8 @@ namespace RunningApp.Views
 
         private float MinScale;
         private float MaxScale = 5.0f;
+
+        private PointF CurrentRDLocation;
 
         public MapView(Context context) :
             base(context)
@@ -57,6 +67,22 @@ namespace RunningApp.Views
 
             this.ScaleDetector = new ScaleGestureDetector(c, this);
             this.Touch += this.RegisterTouchEvent;
+
+            LocationManager lm = (LocationManager)c.GetSystemService(Context.LocationService);
+            Criteria crit = new Criteria();
+            crit.Accuracy = Accuracy.Fine;
+            string lp = lm.GetBestProvider(crit, true);
+            lm.RequestLocationUpdates(lp, 0, 0, this);
+        }
+
+        protected PointF RD2Bitmap(PointF Location)
+        {
+            PointF BitmapLocation = new PointF();
+
+            BitmapLocation.X = Location.X - 136000 / 0.4f;
+            BitmapLocation.Y = (Location.Y - 453000 + (6 * 400)) / 0.4f;
+
+            return BitmapLocation;
         }
 
         protected void SetScale(float NewScale)
@@ -147,10 +173,25 @@ namespace RunningApp.Views
             this.CurrentMatrix.PostScale(this.Scale, this.Scale);
             this.CurrentMatrix.PostTranslate(this.Width / 2, this.Height / 2);
 
+            this.DrawLocation(c);
+
             this.CurrentTotalOffsetX = this.PreviousCenterX + this.OffsetX;
             this.CurrentTotalOffsetY = this.PreviousCenterY + this.OffsetY;
 
             c.DrawBitmap(this.Map, this.CurrentMatrix, new Paint());
+        }
+
+        public void DrawLocation(Canvas c)
+        {
+            if (this.CurrentRDLocation == null) return;
+
+            float x = this.CurrentTotalOffsetX + this.RD2Bitmap(this.CurrentRDLocation).X - this.CurrentTotalOffsetX + this.Width / 2 / this.Scale;
+            float y = this.CurrentTotalOffsetY + this.RD2Bitmap(this.CurrentRDLocation).Y - this.CurrentTotalOffsetY + this.Height / 2 / this.Scale;
+
+            Paint p = new Paint();
+            p.Color = Color.Black;
+
+            c.DrawCircle(x, y, 25, p);
         }
 
         protected float DragStartX;
@@ -212,6 +253,31 @@ namespace RunningApp.Views
         }
 
         public void OnScaleEnd(ScaleGestureDetector detector)
+        {
+        }
+
+        public void OnLocationChanged(Location location)
+        {
+            PointF PreviousRDLocation = this.CurrentRDLocation;
+
+            this.CurrentRDLocation = Projectie.Geo2RD(location);
+
+            Console.WriteLine("Updated");
+
+            if (Math.Max(Math.Abs(PreviousRDLocation.X - this.CurrentRDLocation.X), Math.Abs(PreviousRDLocation.Y - this.CurrentRDLocation.Y)) > MapView.LocationThreshold) {
+                this.Invalidate();
+            }
+        }
+
+        public void OnProviderDisabled(string provider)
+        {
+        }
+
+        public void OnProviderEnabled(string provider)
+        {
+        }
+
+        public void OnStatusChanged(string provider, [GeneratedEnum] Availability status, Bundle extras)
         {
         }
     }
