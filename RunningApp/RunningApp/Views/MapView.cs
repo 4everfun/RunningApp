@@ -76,9 +76,6 @@ namespace RunningApp.Views
             {
                 this.Scale = this.MaxScale;
             }
-            Console.WriteLine(this.Height);
-            Console.WriteLine(this.Map.Height);
-            Console.WriteLine(this.Map.Height * this.Scale);
         }
 
         protected void SetOffset(float OffsetX, float OffsetY)
@@ -158,6 +155,10 @@ namespace RunningApp.Views
 
         protected float DragStartX;
         protected float DragStartY;
+        protected bool IsScaling = false;
+
+        protected int PreviousPointerCount = 0;
+        protected bool skip = false;
 
         protected void RegisterTouchEvent(object sender, TouchEventArgs ea)
         {
@@ -165,7 +166,7 @@ namespace RunningApp.Views
             this.ScaleDetector.OnTouchEvent(ea.Event);
 
             // Drag
-            if(ea.Event.PointerCount == 1)
+            if (ea.Event.PointerCount == 1 && !this.IsScaling && !this.skip)
             {
                 switch (ea.Event.Action)
                 {
@@ -184,6 +185,15 @@ namespace RunningApp.Views
                 }
             }
 
+            if (this.PreviousPointerCount == 2 && ea.Event.PointerCount == 1)
+            {
+                this.IsScaling = false;
+                this.skip = true;
+            }
+            if (this.skip && ea.Event.Action == MotionEventActions.Up) this.skip = false;
+
+            this.PreviousPointerCount = ea.Event.PointerCount;
+
             this.Invalidate();
         }
 
@@ -191,6 +201,7 @@ namespace RunningApp.Views
         public bool OnScale(ScaleGestureDetector detector)
         {
             this.SetScale(this.Scale * detector.ScaleFactor);
+            this.IsScaling = true;
 
             return true;
         }
