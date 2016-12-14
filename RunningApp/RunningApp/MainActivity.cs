@@ -4,7 +4,7 @@ using Android.OS;
 
 namespace RunningApp
 {
-    [Activity(Label = "RunningApp", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "RunningApp", MainLauncher = true, Icon = "@drawable/icon", Theme = "@android:style/Theme.Material.NoActionBar")]
     public class MainActivity : Activity
     {
         protected override void OnCreate(Bundle bundle)
