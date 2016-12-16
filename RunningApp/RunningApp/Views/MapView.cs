@@ -9,11 +9,13 @@ using Android.Locations;
 using Android.OS;
 using Android.Runtime;
 
+using Android.Hardware;
+
 using Kaart;
 
 namespace RunningApp.Views
 {
-    public class MapView : View, ScaleGestureDetector.IOnScaleGestureListener, ILocationListener
+    public class MapView : View, ScaleGestureDetector.IOnScaleGestureListener, ILocationListener, ISensorEventListener
     {
         private Bitmap Map;
         private ScaleGestureDetector ScaleDetector;
@@ -37,7 +39,10 @@ namespace RunningApp.Views
         private float MinScale;
         private float MaxScale = 5.0f;
 
+        private float LocationRadius = 25;
+
         private PointF CurrentRDLocation;
+        private float CurrentLocationRotation;
 
         public MapView(Context context) :
             base(context)
@@ -73,6 +78,9 @@ namespace RunningApp.Views
             crit.Accuracy = Accuracy.Fine;
             string lp = lm.GetBestProvider(crit, true);
             lm.RequestLocationUpdates(lp, 0, 0, this);
+
+            SensorManager sm = (SensorManager)c.GetSystemService(Context.SensorService);
+            sm.RegisterListener(this, sm.GetDefaultSensor(SensorType.Orientation), SensorDelay.Ui);
         }
 
         protected PointF RD2Bitmap(PointF Location)
@@ -140,6 +148,28 @@ namespace RunningApp.Views
             this.OffsetY = ScaledOffsetY;
         }
 
+        private void SetLocation(PointF Location)
+        {
+            PointF BitmapLocation = this.RD2Bitmap(Location);
+            float ScaledX = BitmapLocation.X * this.Scale;
+            float ScaledY = BitmapLocation.Y * this.Scale;
+
+            Console.WriteLine("___");
+            Console.WriteLine(ScaledX);
+            Console.WriteLine(ScaledY);
+
+            this.PreviousCenterX = ScaledX; 
+            this.PreviousCenterY = ScaledY;
+
+            this.Invalidate();
+        }
+
+        public void CenterMap()
+        {
+            if (this.CurrentRDLocation == null) return;
+            this.SetLocation(this.CurrentRDLocation);
+        }
+
         private void FirstDrawActions()
         {
             if (this.FirstDraw)
@@ -184,17 +214,54 @@ namespace RunningApp.Views
         {
             if (this.CurrentRDLocation == null) return;
 
-            Console.WriteLine("___");
-            Console.WriteLine(this.RD2Bitmap(this.CurrentRDLocation).X * this.Scale);
-            Console.WriteLine(this.RD2Bitmap(this.CurrentRDLocation).Y * this.Scale);
-
             float x = this.RD2Bitmap(this.CurrentRDLocation).X * this.Scale + this.CurrentTotalOffsetX * this.Scale + this.Width / 2;
             float y = this.RD2Bitmap(this.CurrentRDLocation).Y * this.Scale + this.CurrentTotalOffsetY * this.Scale + this.Height / 2;
 
             Paint p = new Paint();
             p.Color = Color.Blue;
 
-            c.DrawCircle(x, y, 25, p);
+            c.DrawCircle(x, y, this.LocationRadius, p);
+
+            float TriangleWidth = this.LocationRadius * 2;
+            float TriangleHeight = this.LocationRadius * 1.4f;
+
+            float TriangleOffset = TriangleHeight * 0.2f;
+
+            float TriangleBottomLeftX = x - TriangleWidth / 2;
+            float TriangleBottomRightX = x + TriangleWidth / 2;
+            float TriangleTopX = x;
+
+            float TrianlgeBottomY = y + this.LocationRadius + TriangleOffset;
+            float TriangleTopY = TrianlgeBottomY + TriangleHeight;
+
+            Path path = new Path();
+            // left
+            path.MoveTo(TriangleBottomLeftX, TrianlgeBottomY);
+            path.LineTo(TriangleTopX, TriangleTopY);
+            path.LineTo(TriangleBottomRightX, TrianlgeBottomY);
+            path.LineTo(TriangleBottomLeftX, TrianlgeBottomY);
+            path.Close();
+
+            Paint z = new Paint();
+            z.SetStyle(Paint.Style.Fill);
+            z.Color = Color.Red;
+
+            Matrix m = new Matrix();
+            RectF b = new RectF();
+            path.ComputeBounds(b, true);
+
+            b.Top -= TriangleOffset * 2 + TriangleHeight + this.LocationRadius * 2;
+
+            float HeightWidthDifference = b.Height() - b.Width();
+            b.Left -= HeightWidthDifference / 2;
+            b.Right += HeightWidthDifference / 2;
+
+            //m.PostRotate(this.CurrentLocationRotation, TriangleWidth / 2, this.LocationRadius + TriangleHeight + TriangleOffset);
+            m.PostRotate(this.CurrentLocationRotation, b.CenterX(), b.CenterY());
+
+            path.Transform(m);
+
+            c.DrawPath(path, z);
         }
 
         protected float DragStartX;
@@ -286,6 +353,17 @@ namespace RunningApp.Views
 
         public void OnStatusChanged(string provider, [GeneratedEnum] Availability status, Bundle extras)
         {
+        }
+
+        public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
+        {
+
+        }
+
+        public void OnSensorChanged(SensorEvent e)
+        {
+            this.CurrentLocationRotation = e.Values[0];
+            this.Invalidate();
         }
     }
 }

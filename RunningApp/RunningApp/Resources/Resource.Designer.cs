@@ -77,6 +77,9 @@ namespace RunningApp
 			// aapt resource value: 0x7f050001
 			public const int centerButton = 2131034113;
 			
+			// aapt resource value: 0x7f050004
+			public const int mapView = 2131034116;
+			
 			// aapt resource value: 0x7f050002
 			public const int startButton = 2131034114;
 			
