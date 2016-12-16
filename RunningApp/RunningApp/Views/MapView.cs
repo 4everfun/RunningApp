@@ -79,8 +79,8 @@ namespace RunningApp.Views
         {
             PointF BitmapLocation = new PointF();
 
-            BitmapLocation.X = Location.X - 136000 / 0.4f;
-            BitmapLocation.Y = (Location.Y - 453000 + (6 * 400)) / 0.4f;
+            BitmapLocation.X = (Location.X - 136000) * 0.4f;
+            BitmapLocation.Y = (458000 - Location.Y) * 0.4f;
 
             return BitmapLocation;
         }
@@ -173,23 +173,26 @@ namespace RunningApp.Views
             this.CurrentMatrix.PostScale(this.Scale, this.Scale);
             this.CurrentMatrix.PostTranslate(this.Width / 2, this.Height / 2);
 
-            this.DrawLocation(c);
-
             this.CurrentTotalOffsetX = this.PreviousCenterX + this.OffsetX;
             this.CurrentTotalOffsetY = this.PreviousCenterY + this.OffsetY;
 
             c.DrawBitmap(this.Map, this.CurrentMatrix, new Paint());
+            this.DrawLocation(c);
         }
 
         public void DrawLocation(Canvas c)
         {
             if (this.CurrentRDLocation == null) return;
 
-            float x = this.CurrentTotalOffsetX + this.RD2Bitmap(this.CurrentRDLocation).X - this.CurrentTotalOffsetX + this.Width / 2 / this.Scale;
-            float y = this.CurrentTotalOffsetY + this.RD2Bitmap(this.CurrentRDLocation).Y - this.CurrentTotalOffsetY + this.Height / 2 / this.Scale;
+            Console.WriteLine("___");
+            Console.WriteLine(this.RD2Bitmap(this.CurrentRDLocation).X * this.Scale);
+            Console.WriteLine(this.RD2Bitmap(this.CurrentRDLocation).Y * this.Scale);
+
+            float x = this.RD2Bitmap(this.CurrentRDLocation).X * this.Scale + this.CurrentTotalOffsetX * this.Scale + this.Width / 2;
+            float y = this.RD2Bitmap(this.CurrentRDLocation).Y * this.Scale + this.CurrentTotalOffsetY * this.Scale + this.Height / 2;
 
             Paint p = new Paint();
-            p.Color = Color.Black;
+            p.Color = Color.Blue;
 
             c.DrawCircle(x, y, 25, p);
         }
@@ -262,7 +265,11 @@ namespace RunningApp.Views
 
             this.CurrentRDLocation = Projectie.Geo2RD(location);
 
-            Console.WriteLine("Updated");
+            if (PreviousRDLocation == null)
+            {
+                this.Invalidate();
+                return;
+            }
 
             if (Math.Max(Math.Abs(PreviousRDLocation.X - this.CurrentRDLocation.X), Math.Abs(PreviousRDLocation.Y - this.CurrentRDLocation.Y)) > MapView.LocationThreshold) {
                 this.Invalidate();
