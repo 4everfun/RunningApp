@@ -23,15 +23,8 @@ namespace RunningApp.Views
 
         private const float LocationThreshold = 1;
 
-        private float CurrentTotalOffsetX;
-        private float CurrentTotalOffsetY;
-
-        private float CenterOffsetX;
-        private float CenterOffsetY;
-        private float PreviousCenterX;
-        private float PreviousCenterY;
-        private float OffsetX;
-        private float OffsetY;
+        private float MapOffsetX;
+        private float MapOffsetY;
         private float Scale;
 
         private bool FirstDraw = true;
@@ -110,6 +103,7 @@ namespace RunningApp.Views
             {
                 this.Scale = this.MaxScale;
             }
+            this.UpdateMapOffset();
         }
 
         protected void SetOffset(float OffsetX, float OffsetY)
@@ -117,51 +111,50 @@ namespace RunningApp.Views
             float ScaledOffsetX = OffsetX / this.Scale;
             float ScaledOffsetY = OffsetY / this.Scale;
 
-            if (OffsetX != 0 || OffsetY != 0)
+            this.SetMapOffset(this.MapOffsetX + ScaledOffsetX, this.MapOffsetY + ScaledOffsetY);
+        }
+
+        private void SetMapOffset(float x, float y)
+        {
+            if (x + this.Width / 2 / this.Scale > 0)
             {
-                if (this.PreviousCenterX + ScaledOffsetX + this.Width / 2 / this.Scale > 0)
-                {
-                    this.PreviousCenterX = 0 - this.Width / 2 / this.Scale;
-                    ScaledOffsetX = 0;
-                }
-
-                if (this.PreviousCenterY + ScaledOffsetY + this.Height / 2 / this.Scale > 0)
-                {
-                    this.PreviousCenterY = 0 - this.Height / 2 / this.Scale;
-                    ScaledOffsetY = 0;
-                }
-
-                if (this.PreviousCenterX + ScaledOffsetX + this.Width / 2 / this.Scale - this.Width / this.Scale + this.Map.Width < 0)
-                {
-                    this.PreviousCenterX = 0 - this.Map.Width + this.Width / 2 / this.Scale;
-                    ScaledOffsetX = 0;
-                }
-
-                if (this.PreviousCenterY + ScaledOffsetY + this.Height / 2 / this.Scale - this.Height / this.Scale + this.Map.Height < 0)
-                {
-                    this.PreviousCenterY = 0 - this.Map.Height + this.Height / 2 / this.Scale;
-                    ScaledOffsetY = 0;
-                }
+                x = 0 - this.Width / 2 / this.Scale;
             }
 
-            this.OffsetX = ScaledOffsetX;
-            this.OffsetY = ScaledOffsetY;
+            if (y + this.Height / 2 / this.Scale > 0)
+            {
+                y = 0 - this.Height / 2 / this.Scale;
+            }
+
+            if (x + this.Width / 2 / this.Scale - this.Width / this.Scale + this.Map.Width < 0)
+            {
+                x = 0 - this.Map.Width + this.Width / 2 / this.Scale;
+            }
+
+            if (y + this.Height / 2 / this.Scale - this.Height / this.Scale + this.Map.Height < 0)
+            {
+                y = 0 - this.Map.Height + this.Height / 2 / this.Scale;
+            }
+
+            this.MapOffsetX = x;
+            this.MapOffsetY = y;
+        }
+
+        private void UpdateMapOffset()
+        {
+            this.SetMapOffset(this.MapOffsetX, this.MapOffsetY);
         }
 
         private void SetLocation(PointF Location)
         {
             PointF BitmapLocation = this.RD2Bitmap(Location);
-            float ScaledX = BitmapLocation.X * this.Scale;
-            float ScaledY = BitmapLocation.Y * this.Scale;
+            float ScaledX = (this.Map.Width / 2 - BitmapLocation.X) * this.Scale;
+            float ScaledY = (this.Map.Height / 2 - BitmapLocation.Y) * this.Scale;
 
-            Console.WriteLine("___");
             Console.WriteLine(ScaledX);
             Console.WriteLine(ScaledY);
 
-            this.PreviousCenterX = ScaledX; 
-            this.PreviousCenterY = ScaledY;
-
-            this.Invalidate();
+            this.SetMapOffset(ScaledX, ScaledY);
         }
 
         public void CenterMap()
@@ -180,11 +173,8 @@ namespace RunningApp.Views
                 );
                 this.Scale = this.MinScale * 2;
 
-                this.CenterOffsetX = this.Map.Width / 2 * -1;
-                this.CenterOffsetY = this.Map.Height / 2 * -1;
-
-                this.PreviousCenterX = this.CenterOffsetX;
-                this.PreviousCenterY = this.CenterOffsetY;
+                this.MapOffsetX = this.Map.Width / 2 * -1;
+                this.MapOffsetY = this.Map.Height / 2 * -1;
             }
             this.FirstDraw = false;
         }
@@ -199,12 +189,9 @@ namespace RunningApp.Views
 
             this.CurrentMatrix = new Matrix();
             
-            this.CurrentMatrix.PostTranslate(this.PreviousCenterX + this.OffsetX, this.PreviousCenterY + this.OffsetY);
+            this.CurrentMatrix.PostTranslate(this.MapOffsetX, this.MapOffsetY);
             this.CurrentMatrix.PostScale(this.Scale, this.Scale);
             this.CurrentMatrix.PostTranslate(this.Width / 2, this.Height / 2);
-
-            this.CurrentTotalOffsetX = this.PreviousCenterX + this.OffsetX;
-            this.CurrentTotalOffsetY = this.PreviousCenterY + this.OffsetY;
 
             c.DrawBitmap(this.Map, this.CurrentMatrix, new Paint());
             this.DrawLocation(c);
@@ -214,8 +201,8 @@ namespace RunningApp.Views
         {
             if (this.CurrentRDLocation == null) return;
 
-            float x = this.RD2Bitmap(this.CurrentRDLocation).X * this.Scale + this.CurrentTotalOffsetX * this.Scale + this.Width / 2;
-            float y = this.RD2Bitmap(this.CurrentRDLocation).Y * this.Scale + this.CurrentTotalOffsetY * this.Scale + this.Height / 2;
+            float x = this.RD2Bitmap(this.CurrentRDLocation).X * this.Scale + this.MapOffsetX * this.Scale + this.Width / 2;
+            float y = this.RD2Bitmap(this.CurrentRDLocation).Y * this.Scale + this.MapOffsetY * this.Scale + this.Height / 2;
 
             Paint p = new Paint();
             p.Color = Color.Blue;
@@ -264,8 +251,8 @@ namespace RunningApp.Views
             c.DrawPath(path, z);
         }
 
-        protected float DragStartX;
-        protected float DragStartY;
+        protected float PreviousDragX;
+        protected float PreviousDragY;
         protected bool IsScaling = false;
 
         protected int PreviousPointerCount = 0;
@@ -282,16 +269,14 @@ namespace RunningApp.Views
                 switch (ea.Event.Action)
                 {
                     case MotionEventActions.Down:
-                        this.DragStartX = ea.Event.GetX();
-                        this.DragStartY = ea.Event.GetY();
+                        this.PreviousDragX = ea.Event.GetX();
+                        this.PreviousDragY = ea.Event.GetY();
                         break;
                     case MotionEventActions.Move:
-                        this.SetOffset(ea.Event.GetX() - this.DragStartX, ea.Event.GetY() - this.DragStartY);
-                        break;
-                    case MotionEventActions.Up:
-                        this.PreviousCenterX = this.CurrentTotalOffsetX;
-                        this.PreviousCenterY = this.CurrentTotalOffsetY;
-                        this.SetOffset(0, 0);
+                        this.SetOffset(ea.Event.GetX() - this.PreviousDragX, ea.Event.GetY() - this.PreviousDragY);
+
+                        this.PreviousDragX = ea.Event.GetX();
+                        this.PreviousDragY = ea.Event.GetY();
                         break;
                 }
             }
