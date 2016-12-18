@@ -325,7 +325,10 @@ namespace RunningApp.Views
         /// <param name="c">The canvas</param>
         protected void DrawOrientation(Canvas c)
         {
-            if (this.CurrentLocationRotation == null) return;
+            // TODO: If no orientation is available, don't draw
+
+            // If the current location is out of bound, don't draw
+            if (!this.IsOnMap(this.CurrentRDLocation)) return;
 
             // Determine the position of the CurrentLocation on the screen
             float x = (this.RD2Bitmap(this.CurrentRDLocation).X + this.MapOffsetX) * this.MapScale + this.Width / 2;
