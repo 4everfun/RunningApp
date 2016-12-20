@@ -13,6 +13,7 @@ using Android.Hardware;
 
 using Kaart;
 using RunningApp.Exceptions;
+using System.Collections.Generic;
 
 namespace RunningApp.Views
 {
@@ -73,9 +74,16 @@ namespace RunningApp.Views
         private PointF CurrentRDLocation;
 
         /// <summary>
+        /// True if the track should be tracked
+        /// </summary>
+        private bool Tracking = false;
+
+        /// <summary>
         /// The current rotation of the device
         /// </summary>
         private float CurrentLocationRotation;
+
+        private List<PointF> Track = new List<PointF>();
 
         public MapView(Context context) :
             base(context)
@@ -115,7 +123,7 @@ namespace RunningApp.Views
             Criteria crit = new Criteria();
             crit.Accuracy = Accuracy.Fine;
             string lp = lm.GetBestProvider(crit, true);
-            lm.RequestLocationUpdates(lp, 0, 0, this);
+            lm.RequestLocationUpdates(lp, 0, 0.5f, this);
 
             // Initialize the sensor manager for the orientation
             SensorManager sm = (SensorManager)c.GetSystemService(Context.SensorService);
@@ -250,8 +258,8 @@ namespace RunningApp.Views
         /// </summary>
         public void CenterMapToCurrentLocation()
         {
-            // If there is no current RD location, do nothing
-            if (this.CurrentRDLocation == null) return;
+            // If there is no current RD location, throw an exception
+            if (this.CurrentRDLocation == null) throw new NoLocationException();
 
             // Else set the current map location to the current RD Location
             try
@@ -289,6 +297,7 @@ namespace RunningApp.Views
             c.DrawBitmap(this.Map, this.CurrentMatrix, new Paint());
             this.DrawLocation(c);
             this.DrawOrientation(c);
+            this.DrawTrack(c);
         }
 
         /// <summary>
@@ -348,7 +357,6 @@ namespace RunningApp.Views
             float TriangleTopY = TrianlgeBottomY + TriangleHeight;
 
             Path path = new Path();
-            // left
             path.MoveTo(TriangleBottomLeftX, TrianlgeBottomY);
             path.LineTo(TriangleTopX, TriangleTopY);
             path.LineTo(TriangleBottomRightX, TrianlgeBottomY);
@@ -376,6 +384,55 @@ namespace RunningApp.Views
             path.Transform(m);
 
             c.DrawPath(path, z);
+        }
+
+        private void DrawTrack(Canvas c)
+        {
+            if (this.Track.Count <= 0) return;
+
+            Path path = new Path();
+
+            float FirstX = (this.RD2Bitmap(this.Track[0]).X + this.MapOffsetX) * this.MapScale + this.Width / 2;
+            float FirstY = (this.RD2Bitmap(this.Track[0]).Y + this.MapOffsetY) * this.MapScale + this.Height / 2;
+
+            path.MoveTo(FirstX, FirstY);
+
+            foreach (PointF TrackPoint in this.Track)
+            {
+                float x = (this.RD2Bitmap(TrackPoint).X + this.MapOffsetX) * this.MapScale + this.Width / 2;
+                float y = (this.RD2Bitmap(TrackPoint).Y + this.MapOffsetY) * this.MapScale + this.Height / 2;
+
+                path.LineTo(x, y);
+            }
+
+            Paint paint = new Paint();
+            paint.Color = Color.Red;
+            paint.SetStyle(Paint.Style.Stroke);
+            paint.StrokeWidth = 10;
+
+            c.DrawPath(path, paint);
+        }
+
+        public void StartTracking()
+        {
+            if (this.CurrentRDLocation == null) throw new NoLocationException();
+            if (!this.IsOnMap(this.CurrentRDLocation)) throw new NotOnMapException();
+            this.Track.Clear();
+            this.Tracking = true;
+        }
+
+        public void StopTracking()
+        {
+            this.Tracking = false;
+        }
+
+        private void TrackLocation(Location location)
+        {
+            if (!this.Tracking) return;
+
+            PointF RDLocation = Projectie.Geo2RD(location);
+            if (!this.IsOnMap(RDLocation)) return;
+            this.Track.Add(RDLocation);
         }
 
         /// <summary>
@@ -432,6 +489,9 @@ namespace RunningApp.Views
         public void OnLocationChanged(Location location)
         {
             this.CurrentRDLocation = Projectie.Geo2RD(location);
+
+            this.TrackLocation(location);
+
             this.Invalidate();
         }
 

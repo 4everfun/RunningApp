@@ -14,7 +14,7 @@ namespace RunningApp
     public class MainActivity : Activity
     {
         protected MapView Map;
-        protected AlertDialog.Builder NotOnMapAlert;
+        protected AlertDialog.Builder NoLocationAlert, NotOnMapAlert;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -29,6 +29,16 @@ namespace RunningApp
             // Add the click event to the center button
             FindViewById<Button>(Resource.Id.centerButton).Click += this.CenterMapToCurrentLocation;
 
+            // Add the click event to the start and stop button
+            FindViewById<Button>(Resource.Id.startButton).Click += this.StartTracking;
+            FindViewById<Button>(Resource.Id.stopButton).Click += this.StopTracking;
+
+            // Initialize the dialog for the NoLocation Exception
+            this.NoLocationAlert = new AlertDialog.Builder(this);
+            this.NoLocationAlert.SetTitle("Geen locatie beschikbaar");
+            this.NoLocationAlert.SetMessage("Momenteel kunnen wij uw locatie niet vaststellen. Mogelijk heeft u uw locatieservices uitstaan of duurt het nog even voordat we uw locatie kunnen ontvangen.");
+            this.NoLocationAlert.SetNeutralButton("Oké", (senderAlert, arg) => { });
+
             // Initialize the dialog for the NotOnMap Exception
             this.NotOnMapAlert = new AlertDialog.Builder(this);
             this.NotOnMapAlert.SetTitle("Buiten Utrecht");
@@ -41,11 +51,40 @@ namespace RunningApp
             try
             {
                 Map.CenterMapToCurrentLocation();
-            } catch (NotOnMapException)
+            }
+            catch (NoLocationException)
+            {
+                Dialog Dialog = this.NoLocationAlert.Create();
+                Dialog.Show();
+            }
+            catch (NotOnMapException)
             {
                 Dialog Dialog = this.NotOnMapAlert.Create();
                 Dialog.Show();
             }
+        }
+
+        private void StartTracking(object sender, EventArgs e)
+        {
+            try
+            {
+                Map.StartTracking();
+            }
+            catch (NoLocationException)
+            {
+                Dialog Dialog = this.NoLocationAlert.Create();
+                Dialog.Show();
+            }
+            catch (NotOnMapException)
+            {
+                Dialog Dialog = this.NotOnMapAlert.Create();
+                Dialog.Show();
+            }
+        }
+
+        private void StopTracking(object sender, EventArgs e)
+        {
+            Map.StopTracking();
         }
     }
 }

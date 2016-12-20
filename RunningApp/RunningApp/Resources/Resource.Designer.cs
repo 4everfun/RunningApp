@@ -421,9 +421,6 @@ namespace RunningApp
 			// aapt resource value: 0x7f08000a
 			public const int auto = 2131230730;
 			
-			// aapt resource value: 0x7f080010
-			public const int button3 = 2131230736;
-			
 			// aapt resource value: 0x7f08000d
 			public const int buttonLayout = 2131230733;
 			
@@ -483,6 +480,9 @@ namespace RunningApp
 			
 			// aapt resource value: 0x7f08000f
 			public const int startButton = 2131230735;
+			
+			// aapt resource value: 0x7f080010
+			public const int stopButton = 2131230736;
 			
 			// aapt resource value: 0x7f080004
 			public const int terrain = 2131230724;
