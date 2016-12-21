@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+
 using Android.Content;
 using Android.Util;
 using Android.Views;
@@ -72,6 +74,8 @@ namespace RunningApp.Views
         /// The variable where the current RD location of the device can be saved
         /// </summary>
         private PointF CurrentRDLocation;
+
+        private Stopwatch timer = new Stopwatch();
 
         /// <summary>
         /// True if the track should be tracked
