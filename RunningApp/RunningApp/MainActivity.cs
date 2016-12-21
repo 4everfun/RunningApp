@@ -25,7 +25,7 @@ namespace RunningApp
             this.SetContentView(Resource.Layout.Main);
 
             // Bind the MapView to a variable, so it can be used later in the activity
-            Map = FindViewById<MapView>(Resource.Id.mapView);
+            this.Map = FindViewById<MapView>(Resource.Id.mapView);
 
             // Add the click event to the center button
             // FindViewById<Button>(Resource.Id.centerButton).Click += this.CenterMapToCurrentLocation;
@@ -58,7 +58,7 @@ namespace RunningApp
         {
             try
             {
-                Map.CenterMapToCurrentLocation();
+                this.Map.CenterMapToCurrentLocation();
             }
             catch (NoLocationException)
             {
@@ -83,7 +83,7 @@ namespace RunningApp
 
             try
             {
-                Map.StartTracking();
+                this.Map.StartTracking();
             }
             catch (NoLocationException)
             {
@@ -99,7 +99,7 @@ namespace RunningApp
 
         private void StopTracking(object sender, EventArgs e)
         {
-            Map.StopTracking();
+            this.Map.StopTracking();
         }
     }
 }
