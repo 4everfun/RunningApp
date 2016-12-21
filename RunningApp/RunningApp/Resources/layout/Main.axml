@@ -9,23 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
-            android:text="Centreer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/centerButton"
-            android:layout_weight="0.4" />
-        <Button
             android:text="Start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/startButton"
+            android:id="@+id/btnStartStop"
             android:layout_marginRight="0.0dp"
             android:layout_weight="0.3" />
         <Button
-            android:text="Stop"
+            android:text="Pauze"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/stopButton"
+            android:id="@+id/btnPause"
             android:layout_weight="0.3" />
     </LinearLayout>
     <RunningApp.Views.MapView
