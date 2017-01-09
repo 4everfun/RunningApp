@@ -55,11 +55,6 @@ namespace RunningApp
             this.NotOnMapAlert.SetNeutralButton("Oké", (senderAlert, arg) => { });
         }
 
-        private void PauseTracking(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         private void CenterMapToCurrentLocation(object sender, EventArgs e)
         {
             try
@@ -77,36 +72,73 @@ namespace RunningApp
                 Dialog.Show();
             }
         }
+
         protected bool Started = false;
         private void StartStopTracking(object sender, EventArgs e)
         {
-            this.Started = !this.Started;
-            if (this.Started)
+            if (!this.Started)
             {
+                try
+                {
+                    this.Map.CheckCurrentLocation();
+                    this.Tracker.StartTracking();
 
-            }
-                
+                    this.Started = true;
 
-            try
+                    this.btnStartStop.Text = "Stop";
+                    this.btnPause.Enabled = true;
+                }
+                catch (NoLocationException)
+                {
+                    Dialog Dialog = this.NoLocationAlert.Create();
+                    Dialog.Show();
+                }
+                catch (NotOnMapException)
+                {
+                    Dialog Dialog = this.NotOnMapAlert.Create();
+                    Dialog.Show();
+                }
+            } else
             {
-                this.Map.CheckCurrentLocation();
-                this.Tracker.StartTracking();
-            }
-            catch (NoLocationException)
-            {
-                Dialog Dialog = this.NoLocationAlert.Create();
-                Dialog.Show();
-            }
-            catch (NotOnMapException)
-            {
-                Dialog Dialog = this.NotOnMapAlert.Create();
-                Dialog.Show();
+                this.Started = false;
+
+                this.btnStartStop.Text = "Start";
+                this.btnPause.Text = "Pauze";
+                this.btnPause.Enabled = false;
+
+                this.Tracker.StopTracking();
             }
         }
 
-        private void StopTracking(object sender, EventArgs e)
+        protected bool Paused = false;
+        private void PauseTracking(object sender, EventArgs ea)
         {
-            this.Tracker.StopTracking();
+            if (this.Paused)
+            {
+                this.btnPause.Text = "Pauze";
+                this.Paused = false;
+
+                try
+                {
+                    this.Map.CheckCurrentLocation();
+                    this.Tracker.StartTracking();
+                }
+                catch (NoLocationException)
+                {
+                    Dialog Dialog = this.NoLocationAlert.Create();
+                    Dialog.Show();
+                }
+                catch (NotOnMapException)
+                {
+                    Dialog Dialog = this.NotOnMapAlert.Create();
+                    Dialog.Show();
+                }
+            } else
+            {
+                this.btnPause.Text = "Doorgaan";
+                this.Paused = true;
+                this.Tracker.PauseTracking();
+            }
         }
     }
 }

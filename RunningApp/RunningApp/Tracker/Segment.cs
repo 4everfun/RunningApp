@@ -38,5 +38,10 @@ namespace RunningApp.Tracker
         {
             return this.points;
         }
+
+        public int CountPoints()
+        {
+            return this.points.Count;
+        }
     }
 }

@@ -20,7 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnPause"
-            android:layout_weight="0.3" />
+            android:layout_weight="0.3"
+            android:enabled="false" />
     </LinearLayout>
     <RunningApp.Views.MapView
         android:layout_width="match_parent"

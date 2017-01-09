@@ -425,6 +425,8 @@ namespace RunningApp.Views
 
             foreach(Segment segment in this.Track.GetSegments())
             {
+                if (segment.CountPoints() <= 0) continue;
+
                 try
                 {
                     Path path = new Path();
