@@ -5,6 +5,7 @@ using Android.Widget;
 using Android.OS;
 
 using RunningApp.Views;
+using RunningApp.Tracker;
 using RunningApp.Exceptions;
 
 namespace RunningApp
@@ -15,6 +16,7 @@ namespace RunningApp
     {
         protected MapView Map;
         protected AlertDialog.Builder NoLocationAlert, NotOnMapAlert;
+        protected Tracker.Tracker Tracker;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -25,6 +27,10 @@ namespace RunningApp
 
             // Bind the MapView to a variable, so it can be used later in the activity
             this.Map = FindViewById<MapView>(Resource.Id.mapView);
+
+            this.Tracker = new Tracker.Tracker(this);
+
+            this.Map.SetTracker(this.Tracker);
 
             // Add the click event to the center button
             FindViewById<Button>(Resource.Id.centerButton).Click += this.CenterMapToCurrentLocation;
@@ -68,7 +74,8 @@ namespace RunningApp
         {
             try
             {
-                this.Map.StartTracking();
+                this.Map.CheckCurrentLocation();
+                this.Tracker.StartTracking();
             }
             catch (NoLocationException)
             {
@@ -84,7 +91,7 @@ namespace RunningApp
 
         private void StopTracking(object sender, EventArgs e)
         {
-            this.Map.StopTracking();
+            this.Tracker.StopTracking();
         }
     }
 }

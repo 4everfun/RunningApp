@@ -15,48 +15,93 @@ using RunningApp.Tracker;
 
 namespace RunningApp.Tracker
 {
-    class Tracker : ILocationListener
+    public class Tracker : Java.Lang.Object, ILocationListener
     {
-        public event EventHandler<LocationChangedEventArgs> LocationChanged;
+        public delegate void TrackUpdatedEventHandler(object sender, TrackUpdatedEventArgs e);
+        public event TrackUpdatedEventHandler TrackUpdated;
 
         protected Track track;
 
-        public IntPtr Handle
+        public Tracker(Context c)
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            this.StartNewTrack();
+            this.Initialize(c);
         }
 
-        public void Dispose()
+        public Tracker(Context c, Track track)
         {
-            throw new NotImplementedException();
+            this.SetTrack(track);
+            this.Initialize(c);
         }
 
-        public void StartNewTrack()
+        private void Initialize(Context c)
         {
-            this.track = new Track();
+            // Initialize the location listener. Use Fine Accuarcy and receive updates as often as possible.
+            LocationManager lm = (LocationManager)c.GetSystemService(Context.LocationService);
+            Criteria crit = new Criteria();
+            crit.Accuracy = Accuracy.Fine;
+            string lp = lm.GetBestProvider(crit, true);
+            lm.RequestLocationUpdates(lp, 0, 0.5f, this);
+        }
+
+        protected void StartNewTrack()
+        {
+            this.SetTrack(new Track());
+        }
+
+        protected void SetTrack(Track track)
+        {
+            this.track = track;
+        }
+
+        public bool AddToTrack = false;
+
+        public void StartTracking()
+        {
+            this.AddToTrack = true;
+        }
+
+        public void StopTracking()
+        {
+            this.AddToTrack = false;
+        }
+
+        public void PauseTracking()
+        {
+            this.StopTracking();
+            this.track.NewSegment();
+        }
+
+        protected void TrackLocation(Location location)
+        {
+            Console.WriteLine(this.AddToTrack);
+            if (!this.AddToTrack) return;
+            this.track.Add(location);
+
+            TrackUpdatedEventArgs args = new TrackUpdatedEventArgs(this.track);
+            this.OnTrackUpdated(args);
         }
 
         public void OnLocationChanged(Location location)
         {
-            this.OnLocationChanged(location);
+            this.TrackLocation(location);
+        }
+
+        protected virtual void OnTrackUpdated(TrackUpdatedEventArgs e)
+        {
+            TrackUpdated?.Invoke(this, e);
         }
 
         public void OnProviderDisabled(string provider)
         {
-            throw new NotImplementedException();
         }
 
         public void OnProviderEnabled(string provider)
         {
-            throw new NotImplementedException();
         }
 
         public void OnStatusChanged(string provider, [GeneratedEnum] Availability status, Bundle extras)
         {
-            throw new NotImplementedException();
         }
     }
 }

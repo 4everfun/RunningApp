@@ -11,21 +11,45 @@ using Android.Views;
 using Android.Widget;
 
 using Android.Graphics;
+using Android.Locations;
 
 namespace RunningApp.Tracker
 {
-    class Track
+    public class Track
     {
-        protected List<PointF> track;
+        protected List<Segment> segments;
+        protected int currentSegment = 0;
 
         public Track()
         {
-            this.track = new List<PointF>();
+            this.segments = new List<Segment>();
+            this.NewSegment();
         }
 
-        public Track(List<PointF> track)
+        public Track(List<Segment> track)
         {
+            this.segments = track;
+        }
 
+        public int CountSegments()
+        {
+            return this.segments.Count;
+        }
+
+        public List<Segment> GetSegments()
+        {
+            return this.segments;
+        }
+
+        public void NewSegment()
+        {
+            this.segments.Add(new Segment());
+            this.currentSegment = this.segments.Count - 1;
+        }
+
+        public void Add(Location location)
+        {
+            this.segments[this.currentSegment].Add(location);
         }
     }
 }

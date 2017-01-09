@@ -15,6 +15,7 @@ using Android.Hardware;
 
 using Kaart;
 using RunningApp.Exceptions;
+using RunningApp.Tracker;
 using System.Collections.Generic;
 
 namespace RunningApp.Views
@@ -77,17 +78,14 @@ namespace RunningApp.Views
 
         private Stopwatch timer = new Stopwatch();
 
-        /// <summary>
-        /// True if the track should be tracked
-        /// </summary>
-        private bool Tracking = false;
+        private Tracker.Tracker tracker;
+        private Track Track;
 
         /// <summary>
         /// The current rotation of the device
         /// </summary>
         private float CurrentLocationRotation;
 
-        private List<PointF> Track = new List<PointF>();
 
         public MapView(Context context) :
             base(context)
@@ -143,6 +141,18 @@ namespace RunningApp.Views
                 this.CenterMapToCurrentLocation();
             }
             catch (Exception) {}
+        }
+
+        public void SetTracker(Tracker.Tracker tracker)
+        {
+            this.tracker = tracker;
+            this.tracker.TrackUpdated += this.UpdateTrackFromTracker;
+        }
+
+        public void UpdateTrackFromTracker(object sender, TrackUpdatedEventArgs tuea)
+        {
+            this.Track = tuea.Track;
+            this.Invalidate();
         }
 
         /// <summary>
@@ -273,6 +283,14 @@ namespace RunningApp.Views
             catch (Exception) { throw; }
         }
 
+        public void CheckCurrentLocation()
+        {
+            // If there is no current RD location, throw an exception
+            if (this.CurrentRDLocation == null) throw new NoLocationException();
+
+            if (!this.IsOnMap(this.CurrentRDLocation)) throw new NotOnMapException();
+        }
+
         protected override void OnLayout(bool changed, int left, int right, int top, int bottom)
         {
             if (changed)
@@ -390,53 +408,51 @@ namespace RunningApp.Views
             c.DrawPath(path, z);
         }
 
+        private List<PointF> PointsToRD(List<Location> List)
+        {
+            List<PointF> ret = new List<PointF>();
+            foreach(Location loc in List)
+            {
+                ret.Add(Projectie.Geo2RD(loc));
+            }
+            return ret;
+        }
+
         private void DrawTrack(Canvas c)
         {
-            if (this.Track.Count <= 0) return;
+            if (this.Track == null) return;
+            if (this.Track.CountSegments() <= 0) return;
 
-            Path path = new Path();
-
-            float FirstX = (this.RD2Bitmap(this.Track[0]).X + this.MapOffsetX) * this.MapScale + this.Width / 2;
-            float FirstY = (this.RD2Bitmap(this.Track[0]).Y + this.MapOffsetY) * this.MapScale + this.Height / 2;
-
-            path.MoveTo(FirstX, FirstY);
-
-            foreach (PointF TrackPoint in this.Track)
+            foreach(Segment segment in this.Track.GetSegments())
             {
-                float x = (this.RD2Bitmap(TrackPoint).X + this.MapOffsetX) * this.MapScale + this.Width / 2;
-                float y = (this.RD2Bitmap(TrackPoint).Y + this.MapOffsetY) * this.MapScale + this.Height / 2;
+                try
+                {
+                    Path path = new Path();
 
-                path.LineTo(x, y);
+                    List<PointF> points = PointsToRD(segment.GetPoints());
+
+                    float FirstX = (this.RD2Bitmap(points[0]).X + this.MapOffsetX) * this.MapScale + this.Width / 2;
+                    float FirstY = (this.RD2Bitmap(points[0]).Y + this.MapOffsetY) * this.MapScale + this.Height / 2;
+
+                    path.MoveTo(FirstX, FirstY);
+
+                    foreach (PointF TrackPoint in points)
+                    {
+                        float x = (this.RD2Bitmap(TrackPoint).X + this.MapOffsetX) * this.MapScale + this.Width / 2;
+                        float y = (this.RD2Bitmap(TrackPoint).Y + this.MapOffsetY) * this.MapScale + this.Height / 2;
+
+                        path.LineTo(x, y);
+                    }
+
+                    Paint paint = new Paint();
+                    paint.Color = Color.Red;
+                    paint.SetStyle(Paint.Style.Stroke);
+                    paint.StrokeWidth = 10;
+
+                    c.DrawPath(path, paint);
+                }
+                catch (NotOnMapException) { }
             }
-
-            Paint paint = new Paint();
-            paint.Color = Color.Red;
-            paint.SetStyle(Paint.Style.Stroke);
-            paint.StrokeWidth = 10;
-
-            c.DrawPath(path, paint);
-        }
-
-        public void StartTracking()
-        {
-            if (this.CurrentRDLocation == null) throw new NoLocationException();
-            if (!this.IsOnMap(this.CurrentRDLocation)) throw new NotOnMapException();
-            this.Track.Clear();
-            this.Tracking = true;
-        }
-
-        public void StopTracking()
-        {
-            this.Tracking = false;
-        }
-
-        private void TrackLocation(Location location)
-        {
-            if (!this.Tracking) return;
-
-            PointF RDLocation = Projectie.Geo2RD(location);
-            if (!this.IsOnMap(RDLocation)) return;
-            this.Track.Add(RDLocation);
         }
 
         /// <summary>
@@ -493,9 +509,6 @@ namespace RunningApp.Views
         public void OnLocationChanged(Location location)
         {
             this.CurrentRDLocation = Projectie.Geo2RD(location);
-
-            this.TrackLocation(location);
-
             this.Invalidate();
         }
 
