@@ -17,6 +17,7 @@ namespace RunningApp
         protected MapView Map;
         protected AlertDialog.Builder NoLocationAlert, NotOnMapAlert;
         protected Tracker.Tracker Tracker;
+        protected Button btnStartStop, btnPause; 
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -33,11 +34,13 @@ namespace RunningApp
             this.Map.SetTracker(this.Tracker);
 
             // Add the click event to the center button
-            FindViewById<Button>(Resource.Id.centerButton).Click += this.CenterMapToCurrentLocation;
+            // FindViewById<Button>(Resource.Id.centerButton).Click += this.CenterMapToCurrentLocation;
 
             // Add the click event to the start and stop button
-            FindViewById<Button>(Resource.Id.startButton).Click += this.StartTracking;
-            FindViewById<Button>(Resource.Id.stopButton).Click += this.StopTracking;
+            this.btnStartStop = FindViewById<Button>(Resource.Id.btnStartStop);
+            this.btnStartStop.Click += this.StartStopTracking;
+            this.btnPause = FindViewById<Button>(Resource.Id.btnPause);
+            this.btnPause.Click += this.PauseTracking;
 
             // Initialize the dialog for the NoLocation Exception
             this.NoLocationAlert = new AlertDialog.Builder(this);
@@ -50,6 +53,11 @@ namespace RunningApp
             this.NotOnMapAlert.SetTitle("Buiten Utrecht");
             this.NotOnMapAlert.SetMessage("U bevindt zich momenteel buiten het bereik wat deze app aankan. Ga naar Utrecht en omgeving om deze app te gebruiken en uw positie te centeren op de kaart.");
             this.NotOnMapAlert.SetNeutralButton("Oké", (senderAlert, arg) => { });
+        }
+
+        private void PauseTracking(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void CenterMapToCurrentLocation(object sender, EventArgs e)
@@ -69,9 +77,16 @@ namespace RunningApp
                 Dialog.Show();
             }
         }
-
-        private void StartTracking(object sender, EventArgs e)
+        protected bool Started = false;
+        private void StartStopTracking(object sender, EventArgs e)
         {
+            this.Started = !this.Started;
+            if (this.Started)
+            {
+
+            }
+                
+
             try
             {
                 this.Map.CheckCurrentLocation();

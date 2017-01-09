@@ -375,14 +375,14 @@ namespace RunningApp.Views
             float TriangleBottomRightX = x + TriangleWidth / 2;
             float TriangleTopX = x;
 
-            float TrianlgeBottomY = y + this.LocationRadius + TriangleOffset;
-            float TriangleTopY = TrianlgeBottomY + TriangleHeight;
+            float TriangleBottomY = y + this.LocationRadius + TriangleOffset;
+            float TriangleTopY = TriangleBottomY + TriangleHeight;
 
             Path path = new Path();
-            path.MoveTo(TriangleBottomLeftX, TrianlgeBottomY);
+            path.MoveTo(TriangleBottomLeftX, TriangleBottomY);
             path.LineTo(TriangleTopX, TriangleTopY);
-            path.LineTo(TriangleBottomRightX, TrianlgeBottomY);
-            path.LineTo(TriangleBottomLeftX, TrianlgeBottomY);
+            path.LineTo(TriangleBottomRightX, TriangleBottomY);
+            path.LineTo(TriangleBottomLeftX, TriangleBottomY);
             path.Close();
 
             Paint z = new Paint();
@@ -401,8 +401,8 @@ namespace RunningApp.Views
             b.Right += HeightWidthDifference / 2;
 
             // Draw orientation
-            m.PostRotate(this.CurrentLocationRotation, b.CenterX(), b.CenterY());
-
+            m.PostRotate(this.CurrentLocationRotation -180, b.CenterX(), b.CenterY());
+            Console.WriteLine(this.CurrentLocationRotation);
             path.Transform(m);
 
             c.DrawPath(path, z);
