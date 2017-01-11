@@ -23,8 +23,22 @@
             android:layout_weight="0.3"
             android:enabled="false" />
     </LinearLayout>
-    <RunningApp.Views.MapView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/mapView" />
+        android:layout_height="match_parent">
+        <RunningApp.Views.MapView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/mapView" />
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/centerButton"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/center"
+            android:scaleType="fitCenter"
+            android:layout_marginTop="15dp" />
+    </RelativeLayout>
 </LinearLayout>

@@ -44,7 +44,7 @@ namespace RunningApp.Tracker
             lm.RequestLocationUpdates(lp, 0, 0.5f, this);
         }
 
-        protected void StartNewTrack()
+        public void StartNewTrack()
         {
             this.SetTrack(new Track());
         }
