@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 
 using Android.Content;
 using Android.Util;
@@ -76,10 +75,8 @@ namespace RunningApp.Views
         /// </summary>
         private PointF CurrentRDLocation;
 
-        private Stopwatch timer = new Stopwatch();
-
         private Tracker.Tracker tracker;
-        private Track Track;
+        private Track track;
 
         /// <summary>
         /// The current rotation of the device
@@ -140,7 +137,7 @@ namespace RunningApp.Views
                 this.CurrentRDLocation = Projectie.Geo2RD(lm.GetLastKnownLocation(lp));
                 this.CenterMapToCurrentLocation();
             }
-            catch (Exception) {}
+            catch (Exception) { }
         }
 
         public void SetTracker(Tracker.Tracker tracker)
@@ -151,7 +148,7 @@ namespace RunningApp.Views
 
         public void UpdateTrackFromTracker(object sender, TrackUpdatedEventArgs tuea)
         {
-            this.Track = tuea.Track;
+            this.track = tuea.Track;
             this.Invalidate();
         }
 
@@ -419,10 +416,10 @@ namespace RunningApp.Views
 
         private void DrawTrack(Canvas c)
         {
-            if (this.Track == null) return;
-            if (this.Track.CountSegments() <= 0) return;
+            if (this.track == null) return;
+            if (this.track.CountSegments() <= 0) return;
 
-            foreach(Segment segment in this.Track.GetSegments())
+            foreach(Segment segment in this.track.GetSegments())
             {
                 if (segment.CountPoints() <= 0) continue;
 

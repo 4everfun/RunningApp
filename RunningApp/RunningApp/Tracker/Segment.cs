@@ -29,6 +29,17 @@ namespace RunningApp.Tracker
             this.points = track;
         }
 
+        public float GetTotalDistance()
+        {
+            float distance = 0;
+            for (int i = 0; i < this.points.Count; i++)
+            {
+                if (i == 0) continue;
+                distance += this.points[i].DistanceTo(this.points[i - 1]);
+            }
+            return distance;
+        }
+
         public void Add(Location location)
         {
             this.points.Add(location);

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,8 @@ namespace RunningApp.Tracker
     {
         public delegate void TrackUpdatedEventHandler(object sender, TrackUpdatedEventArgs e);
         public event TrackUpdatedEventHandler TrackUpdated;
+
+        protected Stopwatch stopwatch = new Stopwatch();
 
         protected Track track;
 
@@ -47,6 +50,7 @@ namespace RunningApp.Tracker
         public void StartNewTrack()
         {
             this.SetTrack(new Track());
+            this.stopwatch.Reset();
 
             TrackUpdatedEventArgs args = new TrackUpdatedEventArgs(this.track);
             this.OnTrackUpdated(args);
@@ -61,18 +65,38 @@ namespace RunningApp.Tracker
 
         public void StartTracking()
         {
+            this.stopwatch.Start();
             this.AddToTrack = true;
         }
 
         public void StopTracking()
         {
+            this.stopwatch.Stop();
+            this.stopwatch.Reset();
             this.AddToTrack = false;
         }
 
         public void PauseTracking()
         {
-            this.StopTracking();
+            this.stopwatch.Stop();
+            this.AddToTrack = false;
             this.track.NewSegment();
+        }
+
+        public string GetStopwatchString()
+        {
+            TimeSpan TS = this.stopwatch.Elapsed;
+            return $"{TS.Hours.ToString().PadLeft(2, '0')}:{TS.Minutes.ToString().PadLeft(2, '0')}:{TS.Seconds.ToString().PadLeft(2, '0')}";
+        }
+
+        public float GetTotalDistance()
+        {
+            return this.track.GetTotalDistance();
+        }
+
+        public float GetAvergageSpeed()
+        {
+            return (float)((double)(this.GetTotalDistance() / 1000) / this.stopwatch.Elapsed.TotalHours);
         }
 
         protected void TrackLocation(Location location)

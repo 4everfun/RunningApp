@@ -23,16 +23,21 @@
             android:layout_weight="0.3"
             android:enabled="false" />
     </LinearLayout>
+    <RunningApp.Views.Status
+        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:id="@+id/statusView" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <RunningApp.Views.MapView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:id="@+id/mapView" />
         <ImageButton
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/centerButton"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
