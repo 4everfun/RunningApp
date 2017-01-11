@@ -47,6 +47,9 @@ namespace RunningApp.Tracker
         public void StartNewTrack()
         {
             this.SetTrack(new Track());
+
+            TrackUpdatedEventArgs args = new TrackUpdatedEventArgs(this.track);
+            this.OnTrackUpdated(args);
         }
 
         protected void SetTrack(Track track)
