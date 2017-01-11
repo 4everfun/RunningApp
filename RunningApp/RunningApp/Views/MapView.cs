@@ -402,7 +402,6 @@ namespace RunningApp.Views
 
             // Draw orientation
             m.PostRotate(this.CurrentLocationRotation -180, b.CenterX(), b.CenterY());
-            Console.WriteLine(this.CurrentLocationRotation);
             path.Transform(m);
 
             c.DrawPath(path, z);

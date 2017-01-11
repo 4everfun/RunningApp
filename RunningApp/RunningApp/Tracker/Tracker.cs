@@ -74,7 +74,6 @@ namespace RunningApp.Tracker
 
         protected void TrackLocation(Location location)
         {
-            Console.WriteLine(this.AddToTrack);
             if (!this.AddToTrack) return;
             this.track.Add(location);
 

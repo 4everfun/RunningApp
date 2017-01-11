@@ -74,29 +74,28 @@ namespace RunningApp
         }
 
         protected bool Started = false;
+        protected bool FirstStart = true;
         private void StartStopTracking(object sender, EventArgs e)
         {
             if (!this.Started)
             {
-                try
+                if (!this.FirstStart)
                 {
-                    this.Map.CheckCurrentLocation();
-                    this.Tracker.StartTracking();
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.SetTitle("Bevestiging verwijdering track");
+                    alert.SetMessage("De track zal worden verwijderd als je een nieuwe run start. Weet je dit zeker?");
+                    alert.SetPositiveButton("Ja", (senderAlert, args) => {
+                        this.StartTracking();
+                        Toast.MakeText(this, "De oude track is verwijderd", ToastLength.Short).Show();
+                    });
 
-                    this.Started = true;
+                    alert.SetNegativeButton("Nee", (senderAlert, args) => {
+                        Toast.MakeText(this, "Je track is bewaard gebleven", ToastLength.Short).Show();
+                    });
 
-                    this.btnStartStop.Text = "Stop";
-                    this.btnPause.Enabled = true;
-                }
-                catch (NoLocationException)
-                {
-                    Dialog Dialog = this.NoLocationAlert.Create();
-                    Dialog.Show();
-                }
-                catch (NotOnMapException)
-                {
-                    Dialog Dialog = this.NotOnMapAlert.Create();
-                    Dialog.Show();
+                    Dialog dialog = alert.Create();
+                    dialog.Show();
+
                 }
             } else
             {
@@ -107,6 +106,31 @@ namespace RunningApp
                 this.btnPause.Enabled = false;
 
                 this.Tracker.StopTracking();
+            }
+        }
+        private void StartTracking()
+        {
+            try
+            {
+                this.Map.CheckCurrentLocation();
+                this.Tracker.StartNewTrack();
+                this.Tracker.StartTracking();
+
+                this.Started = true;
+                this.FirstStart = false;
+
+                this.btnStartStop.Text = "Stop";
+                this.btnPause.Enabled = true;
+            }
+            catch (NoLocationException)
+            {
+                Dialog Dialog = this.NoLocationAlert.Create();
+                Dialog.Show();
+            }
+            catch (NotOnMapException)
+            {
+                Dialog Dialog = this.NotOnMapAlert.Create();
+                Dialog.Show();
             }
         }
 
