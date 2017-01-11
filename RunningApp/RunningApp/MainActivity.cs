@@ -34,7 +34,7 @@ namespace RunningApp
             this.Map.SetTracker(this.Tracker);
 
             // Add the click event to the center button
-            // FindViewById<Button>(Resource.Id.centerButton).Click += this.CenterMapToCurrentLocation;
+            FindViewById<ImageButton>(Resource.Id.centerButton).Click += this.CenterMapToCurrentLocation;
 
             // Add the click event to the start and stop button
             this.btnStartStop = FindViewById<Button>(Resource.Id.btnStartStop);
@@ -81,6 +81,7 @@ namespace RunningApp
                 try
                 {
                     this.Map.CheckCurrentLocation();
+                    this.Tracker.StartNewTrack();
                     this.Tracker.StartTracking();
 
                     this.Started = true;

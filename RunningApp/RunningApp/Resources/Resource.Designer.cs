@@ -50,10 +50,13 @@ namespace RunningApp
 		{
 			
 			// aapt resource value: 0x7f020000
-			public const int Icon = 2130837504;
+			public const int center = 2130837504;
 			
 			// aapt resource value: 0x7f020001
-			public const int Map = 2130837505;
+			public const int Icon = 2130837505;
+			
+			// aapt resource value: 0x7f020002
+			public const int Map = 2130837506;
 			
 			static Drawable()
 			{
@@ -76,6 +79,9 @@ namespace RunningApp
 			
 			// aapt resource value: 0x7f050000
 			public const int buttonLayout = 2131034112;
+			
+			// aapt resource value: 0x7f050004
+			public const int centerButton = 2131034116;
 			
 			// aapt resource value: 0x7f050003
 			public const int mapView = 2131034115;
