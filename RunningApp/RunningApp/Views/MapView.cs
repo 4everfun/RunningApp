@@ -16,6 +16,7 @@ using Kaart;
 using RunningApp.Exceptions;
 using RunningApp.Tracker;
 using System.Collections.Generic;
+using Android.Graphics.Drawables;
 
 namespace RunningApp.Views
 {
@@ -75,6 +76,8 @@ namespace RunningApp.Views
         /// </summary>
         private PointF CurrentRDLocation;
 
+        private float Accuracy;
+
         private Tracker.Tracker tracker;
         private Track track;
 
@@ -120,7 +123,7 @@ namespace RunningApp.Views
             // Initialize the location listener. Use Fine Accuarcy and receive updates as often as possible.
             LocationManager lm = (LocationManager)c.GetSystemService(Context.LocationService);
             Criteria crit = new Criteria();
-            crit.Accuracy = Accuracy.Fine;
+            crit.Accuracy = Android.Locations.Accuracy.Fine;
             string lp = lm.GetBestProvider(crit, true);
             lm.RequestLocationUpdates(lp, 0, 0.5f, this);
 
@@ -336,6 +339,18 @@ namespace RunningApp.Views
             float x = (this.RD2Bitmap(this.CurrentRDLocation).X + this.MapOffsetX) * this.MapScale + this.Width / 2;
             float y = (this.RD2Bitmap(this.CurrentRDLocation).Y + this.MapOffsetY) * this.MapScale + this.Height / 2;
 
+
+            // Paint the accuracy
+            this.Accuracy = 100;
+            int AccuracyOnMap = (int)(this.Accuracy * 0.4f * this.MapScale);
+            if (AccuracyOnMap > 0)
+            {
+                Paint p = new Paint();
+                p.Color = Color.DarkBlue;
+                p.Alpha = 90;
+                c.DrawCircle(x, y, AccuracyOnMap, p);
+            }
+
             Paint InnerCirclePaint = new Paint();
             InnerCirclePaint.Color = new Color(68, 94, 224);
 
@@ -507,6 +522,7 @@ namespace RunningApp.Views
         public void OnLocationChanged(Location location)
         {
             this.CurrentRDLocation = Projectie.Geo2RD(location);
+            this.Accuracy = location.Accuracy;
             this.Invalidate();
         }
 

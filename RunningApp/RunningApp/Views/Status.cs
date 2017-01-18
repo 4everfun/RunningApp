@@ -59,8 +59,6 @@ namespace RunningApp.Views
             p.Color = Color.White;
             p.TextSize = 40;
 
-            Console.WriteLine(this.tracker.GetStopwatchString());
-
             c.DrawText("U loopt al: ", 10, 50, p);
             c.DrawText(this.tracker.GetStopwatchString(), 10, 100, p);
 
