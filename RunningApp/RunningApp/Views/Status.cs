@@ -60,7 +60,7 @@ namespace RunningApp.Views
             p.TextSize = 40;
 
             c.DrawText("U loopt al: ", 10, 50, p);
-            c.DrawText(this.tracker.GetStopwatchString(), 10, 100, p);
+            c.DrawText(this.tracker.GetTimeSpanTracking().ToString(), 10, 100, p);
 
             p.TextAlign = Paint.Align.Center;
 

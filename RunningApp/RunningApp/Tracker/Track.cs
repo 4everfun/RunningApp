@@ -61,5 +61,15 @@ namespace RunningApp.Tracker
             }
             return distance;
         }
+
+        public TimeSpan GetTotalTimeSpan()
+        {
+            TimeSpan TotalTime = new TimeSpan();
+            foreach (Segment s in this.segments)
+            {
+                TotalTime = s.GetTimeSpan();
+            }
+            return TotalTime;
+        }
     }
 }

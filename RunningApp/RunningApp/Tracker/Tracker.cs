@@ -83,10 +83,14 @@ namespace RunningApp.Tracker
             this.track.NewSegment();
         }
 
-        public string GetStopwatchString()
+        public TimeSpan GetTrackTimeSpan()
         {
-            TimeSpan TS = this.stopwatch.Elapsed;
-            return $"{TS.Hours.ToString().PadLeft(2, '0')}:{TS.Minutes.ToString().PadLeft(2, '0')}:{TS.Seconds.ToString().PadLeft(2, '0')}";
+            return this.track.GetTotalTimeSpan();
+        }
+
+        public TimeSpan GetTimeSpanTracking()
+        {
+            return this.stopwatch.Elapsed;
         }
 
         public float GetTotalDistance()
