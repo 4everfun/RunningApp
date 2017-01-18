@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Timers;
 
 using Android.App;
 using Android.Widget;
@@ -15,9 +16,10 @@ namespace RunningApp
     public class MainActivity : Activity
     {
         protected MapView Map;
+        protected Status Status;
         protected AlertDialog.Builder NoLocationAlert, NotOnMapAlert;
         protected Tracker.Tracker Tracker;
-        protected Button btnStartStop, btnPause;
+        protected Button btnStartStop, btnPause; 
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -28,13 +30,15 @@ namespace RunningApp
 
             // Bind the MapView to a variable, so it can be used later in the activity
             this.Map = FindViewById<MapView>(Resource.Id.mapView);
+            this.Status = FindViewById<Status>(Resource.Id.statusView);
 
             this.Tracker = new Tracker.Tracker(this);
 
             this.Map.SetTracker(this.Tracker);
+            this.Status.SetTracker(this.Tracker);
 
             // Add the click event to the center button
-            // FindViewById<Button>(Resource.Id.centerButton).Click += this.CenterMapToCurrentLocation;
+            FindViewById<ImageButton>(Resource.Id.centerButton).Click += this.CenterMapToCurrentLocation;
 
             // Add the click event to the start and stop button
             this.btnStartStop = FindViewById<Button>(Resource.Id.btnStartStop);
@@ -81,28 +85,25 @@ namespace RunningApp
             {
                 if (!this.FirstStart)
                 {
-                    AlertDialog.Builder alertStart = new AlertDialog.Builder(this);
-                    alertStart.SetTitle("Bevestiging verwijdering track");
-                    alertStart.SetMessage("De track zal worden verwijderd als je een nieuwe run start. Weet je dit zeker?");
-                    alertStart.SetPositiveButton("Ja", (senderAlert, args) => {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.SetTitle("Bevestiging verwijdering track");
+                    alert.SetMessage("De track zal worden verwijderd als je een nieuwe run start. Weet je dit zeker?");
+                    alert.SetPositiveButton("Ja", (senderAlert, args) => {
                         this.StartTracking();
                         Toast.MakeText(this, "De oude track is verwijderd", ToastLength.Short).Show();
                     });
 
-                    alertStart.SetNegativeButton("Nee", (senderAlert, args) => {
+                    alert.SetNegativeButton("Nee", (senderAlert, args) => {
                         Toast.MakeText(this, "Je track is bewaard gebleven", ToastLength.Short).Show();
                     });
 
-                    Dialog dialog = alertStart.Create();
+                    Dialog dialog = alert.Create();
                     dialog.Show();
-
-                }
-                else
+                } else
                 {
                     this.StartTracking();
                 }
-            }
-            else
+            } else
             {
                 this.Started = false;
 
@@ -110,37 +111,16 @@ namespace RunningApp
                 this.btnPause.Text = "Pauze";
                 this.btnPause.Enabled = false;
 
-                AlertDialog.Builder alertStop = new AlertDialog.Builder(this);
-                alertStop.SetTitle("Bevestiging stoppen track");
-                alertStop.SetMessage("De track zal worden verwijderd als je een nieuwe run start. Weet je dit zeker?");
-                alertStop.SetPositiveButton("Ja", (senderAlert, args) => {
-                    this.StartTracking();
-                    Toast.MakeText(this, "De oude track is verwijderd", ToastLength.Short).Show();
-                });
-
-                alertStop.SetNegativeButton("Nee", (senderAlert, args) => {
-                    Toast.MakeText(this, "Je track is bewaard gebleven", ToastLength.Short).Show();
-                });
-
-                Dialog dialog = alertStop.Create();
-                dialog.Show();
-
                 this.Tracker.StopTracking();
             }
+            this.Status.Invalidate();
         }
+
         private void StartTracking()
         {
             try
             {
                 this.Map.CheckCurrentLocation();
-                this.Tracker.StartNewTrack();
-                this.Tracker.StartTracking();
-
-                this.Started = true;
-                this.FirstStart = false;
-
-                this.btnStartStop.Text = "Stop";
-                this.btnPause.Enabled = true;
             }
             catch (NoLocationException)
             {
@@ -152,6 +132,15 @@ namespace RunningApp
                 Dialog Dialog = this.NotOnMapAlert.Create();
                 Dialog.Show();
             }
+
+            this.Tracker.StartNewTrack();
+            this.Tracker.StartTracking();
+
+            this.Started = true;
+            this.FirstStart = false;
+
+            this.btnStartStop.Text = "Stop";
+            this.btnPause.Enabled = true;
         }
 
         protected bool Paused = false;
@@ -165,7 +154,6 @@ namespace RunningApp
                 try
                 {
                     this.Map.CheckCurrentLocation();
-                    this.Tracker.StartTracking();
                 }
                 catch (NoLocationException)
                 {
@@ -177,13 +165,15 @@ namespace RunningApp
                     Dialog Dialog = this.NotOnMapAlert.Create();
                     Dialog.Show();
                 }
-            }
-            else
+
+                this.Tracker.StartTracking();
+            } else
             {
                 this.btnPause.Text = "Doorgaan";
                 this.Paused = true;
                 this.Tracker.PauseTracking();
             }
+            this.Status.Invalidate();
         }
     }
 }

@@ -80,11 +80,14 @@ namespace RunningApp
 			// aapt resource value: 0x7f050000
 			public const int buttonLayout = 2131034112;
 			
+			// aapt resource value: 0x7f050005
+			public const int centerButton = 2131034117;
+			
 			// aapt resource value: 0x7f050004
-			public const int centerButton = 2131034116;
+			public const int mapView = 2131034116;
 			
 			// aapt resource value: 0x7f050003
-			public const int mapView = 2131034115;
+			public const int statusView = 2131034115;
 			
 			static Id()
 			{

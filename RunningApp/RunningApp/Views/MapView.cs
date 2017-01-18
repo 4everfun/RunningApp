@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 
 using Android.Content;
 using Android.Util;
@@ -17,6 +16,7 @@ using Kaart;
 using RunningApp.Exceptions;
 using RunningApp.Tracker;
 using System.Collections.Generic;
+using Android.Graphics.Drawables;
 
 namespace RunningApp.Views
 {
@@ -76,10 +76,10 @@ namespace RunningApp.Views
         /// </summary>
         private PointF CurrentRDLocation;
 
-        private Stopwatch timer = new Stopwatch();
+        private float Accuracy;
 
         private Tracker.Tracker tracker;
-        private Track Track;
+        private Track track;
 
         /// <summary>
         /// The current rotation of the device
@@ -123,7 +123,7 @@ namespace RunningApp.Views
             // Initialize the location listener. Use Fine Accuarcy and receive updates as often as possible.
             LocationManager lm = (LocationManager)c.GetSystemService(Context.LocationService);
             Criteria crit = new Criteria();
-            crit.Accuracy = Accuracy.Fine;
+            crit.Accuracy = Android.Locations.Accuracy.Fine;
             string lp = lm.GetBestProvider(crit, true);
             lm.RequestLocationUpdates(lp, 0, 0.5f, this);
 
@@ -140,7 +140,7 @@ namespace RunningApp.Views
                 this.CurrentRDLocation = Projectie.Geo2RD(lm.GetLastKnownLocation(lp));
                 this.CenterMapToCurrentLocation();
             }
-            catch (Exception) {}
+            catch (Exception) { }
         }
 
         public void SetTracker(Tracker.Tracker tracker)
@@ -151,7 +151,7 @@ namespace RunningApp.Views
 
         public void UpdateTrackFromTracker(object sender, TrackUpdatedEventArgs tuea)
         {
-            this.Track = tuea.Track;
+            this.track = tuea.Track;
             this.Invalidate();
         }
 
@@ -339,6 +339,18 @@ namespace RunningApp.Views
             float x = (this.RD2Bitmap(this.CurrentRDLocation).X + this.MapOffsetX) * this.MapScale + this.Width / 2;
             float y = (this.RD2Bitmap(this.CurrentRDLocation).Y + this.MapOffsetY) * this.MapScale + this.Height / 2;
 
+
+            // Paint the accuracy
+            this.Accuracy = 100;
+            int AccuracyOnMap = (int)(this.Accuracy * 0.4f * this.MapScale);
+            if (AccuracyOnMap > 0)
+            {
+                Paint p = new Paint();
+                p.Color = Color.DarkBlue;
+                p.Alpha = 90;
+                c.DrawCircle(x, y, AccuracyOnMap, p);
+            }
+
             Paint InnerCirclePaint = new Paint();
             InnerCirclePaint.Color = new Color(68, 94, 224);
 
@@ -419,10 +431,10 @@ namespace RunningApp.Views
 
         private void DrawTrack(Canvas c)
         {
-            if (this.Track == null) return;
-            if (this.Track.CountSegments() <= 0) return;
+            if (this.track == null) return;
+            if (this.track.CountSegments() <= 0) return;
 
-            foreach(Segment segment in this.Track.GetSegments())
+            foreach(Segment segment in this.track.GetSegments())
             {
                 if (segment.CountPoints() <= 0) continue;
 
@@ -510,6 +522,7 @@ namespace RunningApp.Views
         public void OnLocationChanged(Location location)
         {
             this.CurrentRDLocation = Projectie.Geo2RD(location);
+            this.Accuracy = location.Accuracy;
             this.Invalidate();
         }
 

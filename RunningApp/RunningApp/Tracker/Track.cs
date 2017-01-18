@@ -51,5 +51,25 @@ namespace RunningApp.Tracker
         {
             this.segments[this.currentSegment].Add(location);
         }
+
+        public float GetTotalDistance()
+        {
+            float distance = 0;
+            foreach (Segment s in this.segments)
+            {
+                distance += s.GetTotalDistance();
+            }
+            return distance;
+        }
+
+        public TimeSpan GetTotalTimeSpan()
+        {
+            TimeSpan TotalTime = new TimeSpan();
+            foreach (Segment s in this.segments)
+            {
+                TotalTime = s.GetTimeSpan();
+            }
+            return TotalTime;
+        }
     }
 }
