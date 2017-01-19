@@ -126,11 +126,13 @@ namespace RunningApp
             {
                 Dialog Dialog = this.NoLocationAlert.Create();
                 Dialog.Show();
+                return;
             }
             catch (NotOnMapException)
             {
                 Dialog Dialog = this.NotOnMapAlert.Create();
                 Dialog.Show();
+                return;
             }
 
             this.Tracker.StartNewTrack();
