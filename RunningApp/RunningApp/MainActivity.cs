@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Timers;
 
 using Android.App;
 using Android.Widget;
 using Android.OS;
 
 using RunningApp.Views;
-using RunningApp.Tracker;
 using RunningApp.Exceptions;
+using RunningApp.Dialogs;
 
 namespace RunningApp
 {
@@ -105,6 +104,31 @@ namespace RunningApp
                 }
             } else
             {
+                FragmentTransaction ft = FragmentManager.BeginTransaction();
+                Fragment prev = FragmentManager.FindFragmentByTag("StopTrackingDialog");
+                if (prev != null) ft.Remove(prev);
+                ft.AddToBackStack(null);
+
+                // Create and show the dialog.
+                StopTrackingDialog dialogBox = StopTrackingDialog.NewInstance(null);
+                dialogBox.Show(ft, "StopTrackingDialog");
+
+                dialogBox.OnSaveClick += delegate (StopTrackingDialog s, EventArgs ea)
+                {
+                    Toast.MakeText(this, "Geklikt op opslaan!", ToastLength.Short).Show();
+                    s.Dismiss();
+                };
+                dialogBox.OnDeleteClick += delegate (StopTrackingDialog s, EventArgs ea)
+                {
+                    Toast.MakeText(this, "Geklikt op verwijderen!", ToastLength.Short).Show();
+                    s.Dismiss();
+                };
+                dialogBox.OnShareClick += delegate (StopTrackingDialog s, EventArgs ea)
+                {
+                    Toast.MakeText(this, "Geklikt op delen!", ToastLength.Short).Show();
+                    s.Dismiss();
+                };
+
                 this.Started = false;
 
                 this.btnStartStop.Text = "Start";
