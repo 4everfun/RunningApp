@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Timers;
 
 using Android.App;
 using Android.Widget;
 using Android.OS;
 
 using RunningApp.Views;
-using RunningApp.Tracker;
 using RunningApp.Exceptions;
 
 namespace RunningApp

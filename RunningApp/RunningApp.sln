@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunningApp", "RunningApp\Ru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kaart", "Kaart\Kaart.csproj", "{202CA463-0738-45CE-A63C-F1D8B8B20594}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLLite", "SQLLite\SQLLite.csproj", "{6D279F24-3A37-4E45-8C7F-21252CCD8CEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{202CA463-0738-45CE-A63C-F1D8B8B20594}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{202CA463-0738-45CE-A63C-F1D8B8B20594}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{202CA463-0738-45CE-A63C-F1D8B8B20594}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D279F24-3A37-4E45-8C7F-21252CCD8CEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D279F24-3A37-4E45-8C7F-21252CCD8CEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D279F24-3A37-4E45-8C7F-21252CCD8CEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D279F24-3A37-4E45-8C7F-21252CCD8CEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
