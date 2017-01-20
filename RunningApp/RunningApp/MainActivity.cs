@@ -3,10 +3,12 @@
 using Android.App;
 using Android.Widget;
 using Android.OS;
+using Android.Content;
 
 using RunningApp.Views;
 using RunningApp.Exceptions;
 using RunningApp.Dialogs;
+using Android.Views;
 
 namespace RunningApp
 {
@@ -126,6 +128,12 @@ namespace RunningApp
                 dialogBox.OnShareClick += delegate (StopTrackingDialog s, EventArgs ea)
                 {
                     Toast.MakeText(this, "Geklikt op delen!", ToastLength.Short).Show();
+                    takeScreenShot();
+                    string bericht = "Test";
+                    Intent i = new Intent(Intent.ActionSend);
+                    i.SetType("text/plain");
+                    i.PutExtra(Intent.ExtraText, bericht);
+                    this.StartActivity(i);
                     s.Dismiss();
                 };
 
@@ -198,6 +206,44 @@ namespace RunningApp
                 this.Tracker.PauseTracking();
             }
             this.Status.Invalidate();
+        }
+        public void takeScreenShot()
+        {
+            //
+            string path = System.IO.Path.Combine(Android.OS.Environment.ExternalStorageDirectory.Path, "CHBDirectory");
+
+            //
+            View v1 = Window.DecorView.RootView;
+            v1.DrawingCacheEnabled = true;
+
+            //
+            Android.Graphics.Bitmap bitmap = Android.Graphics.Bitmap.CreateBitmap(v1.GetDrawingCache(true));
+
+            //
+            Java.IO.File imageFile = new Java.IO.File(path, System.Environment.TickCount + ".jpg");
+
+            //           
+            System.IO.MemoryStream bytes = new System.IO.MemoryStream();
+            int quality = 100;
+
+
+            //
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(path);
+            if (!dir.Exists)
+                dir.CreateSubdirectory(path);
+
+            //
+            //
+            Java.IO.FileOutputStream fo;
+            imageFile.CreateNewFile();
+            fo = new Java.IO.FileOutputStream(imageFile);
+
+            bitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg, quality, bytes);
+            fo.Write(bytes.ToArray());
+            fo.Close();
+
+            // a litle work for you :)
+            // openScreenshot(imageFile);
         }
     }
 }
