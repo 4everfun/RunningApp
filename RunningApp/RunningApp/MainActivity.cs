@@ -25,6 +25,8 @@ namespace RunningApp
         protected AlertDialog.Builder NoLocationAlert, NotOnMapAlert;
         protected Tracker.Tracker Tracker;
         protected Button btnStartStop, btnPause; 
+		protected DrawerLayout drawerLayout;
+		protected NavigationView navigationView;
 
         protected override void OnCreate(Bundle bundle)
         {
