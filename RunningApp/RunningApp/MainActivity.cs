@@ -9,6 +9,11 @@ using RunningApp.Views;
 using RunningApp.Tracker;
 using RunningApp.Exceptions;
 
+using V7Toolbar = Android.Support.V7.Widget.Toolbar;
+using Android.Support.V7.App;
+using Android.Support.V4.Widget;
+using Android.Support.Design.Widget;
+
 namespace RunningApp
 {
     // Remove the ActionBar
@@ -27,6 +32,15 @@ namespace RunningApp
 
             // Set the content view to the main XML file 
             this.SetContentView(Resource.Layout.Main);
+
+            var toolbar = FindViewById<V7Toolbar>(Resource.Id.toolbar);
+            SetSupportActionBar(toolbar);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetDisplayShowTitleEnabled(false);
+            SupportActionBar.SetHomeButtonEnabled(true);
+            SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_menu);
+            drawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
 
             // Bind the MapView to a variable, so it can be used later in the activity
             this.Map = FindViewById<MapView>(Resource.Id.mapView);
@@ -57,6 +71,17 @@ namespace RunningApp
             this.NotOnMapAlert.SetTitle("Buiten Utrecht");
             this.NotOnMapAlert.SetMessage("U bevindt zich momenteel buiten het bereik wat deze app aankan. Ga naar Utrecht en omgeving om deze app te gebruiken en uw positie te centeren op de kaart.");
             this.NotOnMapAlert.SetNeutralButton("Oké", (senderAlert, arg) => { });
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Android.Resource.Id.Home:
+                    drawerLayout.OpenDrawer(Android.Support.V4.View.GravityCompat.Start);
+                    return true;
+            }
+            return base.OnOptionsItemSelected(item);
         }
 
         private void CenterMapToCurrentLocation(object sender, EventArgs e)
