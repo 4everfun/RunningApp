@@ -109,7 +109,6 @@ namespace RunningApp
 			// aapt resource value: 0x7f01003e
 			public const int actionBarPopupTheme = 2130772030;
 			
-<<<<<<< HEAD
 			// aapt resource value: 0x7f010043
 			public const int actionBarSize = 2130772035;
 			
@@ -5746,10 +5745,6 @@ namespace RunningApp
 			
 			public static int[] Views_MapView = new int[] {
 					2130772279};
-=======
-			public static int[] Views_MapView = new int[] {
-					2130771968};
->>>>>>> parent of dc24857... first
 			
 			// aapt resource value: 0
 			public const int Views_MapView_RunningAppItemTemplateSelector = 0;

@@ -18,7 +18,7 @@ using Android.Views;
 namespace RunningApp
 {
     // Remove the ActionBar
-    [Activity(Label = "RunningApp", MainLauncher = true, Icon = "@drawable/icon", Theme = "@android:style/Theme.Material.NoActionBar")]
+    [Activity(Label = "RunningApp", MainLauncher = true, Icon = "@drawable/icon", Theme = "@style/Theme.AppCompat.NoActionBar")]
     public class MainActivity : AppCompatActivity
     {
         protected MapView Map;
