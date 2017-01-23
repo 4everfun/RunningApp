@@ -28,8 +28,6 @@ namespace RunningApp
 		{
 			global::Kaart.Resource.String.ApplicationName = global::RunningApp.Resource.String.ApplicationName;
 			global::Kaart.Resource.String.Hello = global::RunningApp.Resource.String.Hello;
-			global::SQLLite.Resource.String.ApplicationName = global::RunningApp.Resource.String.ApplicationName;
-			global::SQLLite.Resource.String.Hello = global::RunningApp.Resource.String.Hello;
 		}
 		
 		public partial class Attribute

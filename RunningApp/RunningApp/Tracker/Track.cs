@@ -71,5 +71,10 @@ namespace RunningApp.Tracker
             }
             return TotalTime;
         }
+
+        public string ToJSON()
+        {
+            return "";
+        }
     }
 }

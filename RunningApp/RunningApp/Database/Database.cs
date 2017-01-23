@@ -17,21 +17,18 @@ namespace RunningApp.Database
 {
     class Database
     {
-
         public static SQLiteConnection Connection;
 
         public static SQLiteConnection NewInstance()
         {
-
             string docsFolder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            string path = System.IO.Path.Combine(docsFolder, "kleuren.db");
-            Database.Connection = new SQLiteConnection(pad);
+            string path = Path.Combine(docsFolder, "RunningApp.db");
+            Database.Connection = new SQLiteConnection(path);
             if (!File.Exists(path))
             {
-                Database.Connection.CreateTable<KleurItem>();
-                foreach (KleurItem k in defaultKleuren)
-                    90 database.Insert(k);
+                Database.Connection.CreateTable<TrackModel>();
             }
+            return Database.Connection;
         }
     }
 }
