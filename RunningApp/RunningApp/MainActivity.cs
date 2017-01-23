@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Timers;
 
 using Android.App;
 using Android.Widget;
 using Android.OS;
 
 using RunningApp.Views;
-using RunningApp.Tracker;
 using RunningApp.Exceptions;
+
+using SQLite;
 
 namespace RunningApp
 {
@@ -19,11 +19,15 @@ namespace RunningApp
         protected Status Status;
         protected AlertDialog.Builder NoLocationAlert, NotOnMapAlert;
         protected Tracker.Tracker Tracker;
-        protected Button btnStartStop, btnPause; 
+        protected Button btnStartStop, btnPause;
+
+        public SQLiteConnection Database;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+
+            this.Database = RunningApp.Database.Database.NewInstance();
 
             // Set the content view to the main XML file 
             this.SetContentView(Resource.Layout.Main);
