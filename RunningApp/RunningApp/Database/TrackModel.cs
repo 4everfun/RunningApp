@@ -6,11 +6,13 @@ using RunningApp.Tracker;
 
 namespace RunningApp.Database
 {
-    class TrackModel
+    public class TrackModel
     {
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
         private string Track { get; set; }
+
+        public TrackModel() { }
 
         public TrackModel(Track Track)
         {

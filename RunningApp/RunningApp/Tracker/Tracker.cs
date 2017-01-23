@@ -30,6 +30,7 @@ namespace RunningApp.Tracker
         protected Stopwatch stopwatch = new Stopwatch();
 
         protected Track track;
+        protected TrackModel TrackModel;
 
         public Tracker(MainActivity c)
         {
@@ -64,9 +65,16 @@ namespace RunningApp.Tracker
             this.OnTrackUpdated(args);
         }
 
+        protected void SetTrack(TrackModel track)
+        {
+            this.track = track.GetTrack();
+            this.TrackModel = track;
+        }
+
         protected void SetTrack(Track track)
         {
             this.track = track;
+            this.TrackModel = new TrackModel(this.track);
         }
 
         public bool AddToTrack = false;
@@ -93,10 +101,18 @@ namespace RunningApp.Tracker
 
         public void SaveTrack()
         {
-            TrackModel TrackModel = new TrackModel(this);
-
             SQLiteConnection Database = RunningApp.Database.Database.NewInstance();
 
+            TrackModel TrackModel = (from p in Database.Table<TrackModel>() where p.ID == this.TrackModel.ID select p).FirstOrDefault();
+
+            if (TrackModel == null)
+            {
+                Database.Insert(new TrackModel(this.track));
+            } else
+            {
+                TrackModel.SetTrack(this.track);
+                Database.Update(TrackModel);
+            }
         }
 
         public TimeSpan GetTrackTimeSpan()
