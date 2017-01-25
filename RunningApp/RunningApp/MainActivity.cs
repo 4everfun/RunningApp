@@ -9,6 +9,9 @@ using RunningApp.Views;
 using RunningApp.Exceptions;
 using RunningApp.Dialogs;
 using Android.Views;
+using Android.Graphics;
+using System.IO;
+using Android.Util;
 
 namespace RunningApp
 {
@@ -128,12 +131,7 @@ namespace RunningApp
                 dialogBox.OnShareClick += delegate (StopTrackingDialog s, EventArgs ea)
                 {
                     Toast.MakeText(this, "Geklikt op delen!", ToastLength.Short).Show();
-                    takeScreenShot();
-                    string bericht = "Test";
-                    Intent i = new Intent(Intent.ActionSend);
-                    i.SetType("text/plain");
-                    i.PutExtra(Intent.ExtraText, bericht);
-                    this.StartActivity(i);
+                    ShareImage(StoreScreenShot(TakeScreenShot(this.Map)), this, "RunningApp", "Test bericht");
                     s.Dismiss();
                 };
 
@@ -207,43 +205,70 @@ namespace RunningApp
             }
             this.Status.Invalidate();
         }
-        public void takeScreenShot()
+               
+        public static Bitmap TakeScreenShot(View view)
         {
-            //
-            string path = System.IO.Path.Combine(Android.OS.Environment.ExternalStorageDirectory.Path, "CHBDirectory");
+            View screenView = view.RootView;
+            screenView.DrawingCacheEnabled = true;
+            Bitmap bitmap = Bitmap.CreateBitmap(screenView.DrawingCache);
+            screenView.DrawingCacheEnabled = false;
+            return bitmap;
+        }
+        public static Java.IO.File StoreScreenShot(Bitmap picture)
+        {
+            var folder = Android.OS.Environment.ExternalStorageDirectory + Java.IO.File.Separator + "RunningApp";
+            var extFileName = Android.OS.Environment.ExternalStorageDirectory +
+            Java.IO.File.Separator +
+            Guid.NewGuid() + ".jpeg";
+            try
+            {
+                if (!Directory.Exists(folder))
+                    Directory.CreateDirectory(folder);
 
-            //
-            View v1 = Window.DecorView.RootView;
-            v1.DrawingCacheEnabled = true;
+                Java.IO.File file = new Java.IO.File(extFileName);
 
-            //
-            Android.Graphics.Bitmap bitmap = Android.Graphics.Bitmap.CreateBitmap(v1.GetDrawingCache(true));
-
-            //
-            Java.IO.File imageFile = new Java.IO.File(path, System.Environment.TickCount + ".jpg");
-
-            //           
-            System.IO.MemoryStream bytes = new System.IO.MemoryStream();
-            int quality = 100;
-
-
-            //
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(path);
-            if (!dir.Exists)
-                dir.CreateSubdirectory(path);
-
-            //
-            //
-            Java.IO.FileOutputStream fo;
-            imageFile.CreateNewFile();
-            fo = new Java.IO.FileOutputStream(imageFile);
-
-            bitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg, quality, bytes);
-            fo.Write(bytes.ToArray());
-            fo.Close();
-
-            // a litle work for you :)
-            // openScreenshot(imageFile);
+                using (var fs = new FileStream(extFileName, FileMode.OpenOrCreate))
+                {
+                    try
+                    {
+                        picture.Compress(Bitmap.CompressFormat.Jpeg, 100, fs);
+                    }
+                    finally
+                    {
+                        fs.Flush();
+                        fs.Close();
+                    }
+                    return file;
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Log.Error(LogPriority.Error.ToString(), "-------------------" + ex.Message.ToString());
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(LogPriority.Error.ToString(), "-------------------" + ex.Message.ToString());
+                return null;
+            }
+        }
+        public static void ShareImage(Java.IO.File file, Activity activity, string subject, string message)
+        {
+            Android.Net.Uri uri = Android.Net.Uri.FromFile(file);
+            Intent i = new Intent(Intent.ActionSendMultiple);
+            i.AddFlags(ActivityFlags.GrantReadUriPermission);
+            i.PutExtra(Intent.ExtraSubject, subject);
+            i.PutExtra(Intent.ExtraText, message);
+            i.PutExtra(Intent.ExtraStream, uri);
+            i.SetType("image/*");
+            try
+            {
+                activity.StartActivity(Intent.CreateChooser(i, "Share Screenshot"));
+            }
+            catch (ActivityNotFoundException ex)
+            {
+                Toast.MakeText(activity.ApplicationContext, "No App Available", ToastLength.Long).Show();
+            }
         }
     }
 }
