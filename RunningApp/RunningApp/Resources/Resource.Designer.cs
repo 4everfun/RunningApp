@@ -1995,16 +1995,19 @@ namespace RunningApp
 			public const int design_snackbar_background = 2130837590;
 			
 			// aapt resource value: 0x7f020057
-			public const int Icon = 2130837591;
+			public const int ic_menu = 2130837591;
 			
 			// aapt resource value: 0x7f020058
-			public const int Map = 2130837592;
+			public const int Icon = 2130837592;
 			
 			// aapt resource value: 0x7f020059
-			public const int navigation_empty_icon = 2130837593;
+			public const int Map = 2130837593;
 			
 			// aapt resource value: 0x7f02005a
-			public const int notification_template_icon_bg = 2130837594;
+			public const int navigation_empty_icon = 2130837594;
+			
+			// aapt resource value: 0x7f02005b
+			public const int notification_template_icon_bg = 2130837595;
 			
 			static Drawable()
 			{
@@ -2253,17 +2256,8 @@ namespace RunningApp
 			// aapt resource value: 0x7f060016
 			public const int multiply = 2131099670;
 			
-			// aapt resource value: 0x7f060090
-			public const int nav_FeedBack = 2131099792;
-			
-			// aapt resource value: 0x7f06008f
-			public const int nav_about = 2131099791;
-			
 			// aapt resource value: 0x7f06008d
-			public const int nav_home = 2131099789;
-			
-			// aapt resource value: 0x7f06008e
-			public const int nav_messages = 2131099790;
+			public const int nav_my_tracks = 2131099789;
 			
 			// aapt resource value: 0x7f060079
 			public const int nav_view = 2131099769;

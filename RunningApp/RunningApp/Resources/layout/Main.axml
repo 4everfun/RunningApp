@@ -2,22 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        android:background="#33B86C"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_scrollFlags="scroll|enterAlways" />
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:minHeight="?attr/actionBarSize"
+      android:background="#33B86C"
+      app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+      app:layout_scrollFlags="scroll|enterAlways"  />
     <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:layout_width="match_parent">
+      android:id="@+id/drawer_layout"
+      android:layout_height="match_parent"
+      android:fitsSystemWindows="true"
+      android:layout_width="match_parent">
+        <android.support.design.widget.NavigationView
+          android:id="@+id/nav_view"
+          android:layout_height="match_parent"
+          android:layout_width="wrap_content"
+          android:layout_gravity="start"
+          android:fitsSystemWindows="true"
+          app:menu="@menu/menu" />
         <LinearLayout
+          android:orientation="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+          <LinearLayout
             android:orientation="horizontal"
             android:id="@+id/buttonLayout"
             android:layout_width="match_parent"
@@ -36,14 +48,14 @@
                 android:id="@+id/btnPause"
                 android:layout_weight="0.3"
                 android:enabled="false" />
-        </LinearLayout>
-        <RunningApp.Views.Status
-            android:layout_height="50dp"
-            android:layout_width="match_parent"
-            android:id="@+id/statusView" />
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+          </LinearLayout>
+          <RunningApp.Views.Status
+              android:layout_height="50dp"
+              android:layout_width="match_parent"
+              android:id="@+id/statusView" />
+          <RelativeLayout
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
             <RunningApp.Views.MapView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -59,13 +71,7 @@
                 android:src="@drawable/center"
                 android:scaleType="fitCenter"
                 android:layout_marginTop="15dp" />
-        </RelativeLayout>
-        <android.support.design.widget.NavigationView
-            android:id="@+id/nav_view"
-            android:layout_height="match_parent"
-            android:layout_width="40*"
-            android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:menu="@menu/menu" />
+          </RelativeLayout>
+        </LinearLayout>
     </android.support.v4.widget.DrawerLayout>
 </LinearLayout>

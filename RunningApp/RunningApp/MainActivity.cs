@@ -18,8 +18,8 @@ using Android.Views;
 namespace RunningApp
 {
     // Remove the ActionBar
-    [Activity(Label = "RunningApp", MainLauncher = true, Icon = "@drawable/icon", Theme = "@style/Theme.AppCompat.NoActionBar")]
-    public class MainActivity : AppCompatActivity
+    [Activity(Label = "RunningApp", MainLauncher = true, Icon = "@drawable/icon", Theme = "@style/Theme.DesignDemo")]
+    public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         protected MapView Map;
         protected Status Status;
@@ -29,6 +29,11 @@ namespace RunningApp
 		protected DrawerLayout drawerLayout;
 		protected NavigationView navigationView;
 
+        private void SelectItem()
+        {
+
+        }
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -36,14 +41,15 @@ namespace RunningApp
             // Set the content view to the main XML file 
             this.SetContentView(Resource.Layout.Main);
 
-           var toolbar = FindViewById<V7Toolbar>(Resource.Id.toolbar);
-           SetSupportActionBar(toolbar);
-           SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-           SupportActionBar.SetDisplayShowTitleEnabled(false);
-           SupportActionBar.SetHomeButtonEnabled(true);
-          // SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_menu);
-           drawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-           navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+            var toolbar = FindViewById<V7Toolbar>(Resource.Id.toolbar);
+            SetSupportActionBar(toolbar);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetDisplayShowTitleEnabled(false);
+            SupportActionBar.SetHomeButtonEnabled(true);
+            SupportActionBar.SetHomeAsUpIndicator(Resource.Drawable.ic_menu);
+            drawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+            navigationView.SetNavigationItemSelectedListener(this);
 
             // Bind the MapView to a variable, so it can be used later in the activity
             this.Map = FindViewById<MapView>(Resource.Id.mapView);
@@ -78,13 +84,29 @@ namespace RunningApp
 
        public override bool OnOptionsItemSelected(IMenuItem item)
        {
-           switch (item.ItemId)
+            switch (item.ItemId)
             {
-               case Android.Resource.Id.Home:
-                   drawerLayout.OpenDrawer(Android.Support.V4.View.GravityCompat.Start);
-               return true;
+                case Android.Resource.Id.Home:
+                    drawerLayout.OpenDrawer(Android.Support.V4.View.GravityCompat.Start);
+                    break;
+                default:
+                    return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        public bool OnNavigationItemSelected(IMenuItem item)
+        {
+            Console.WriteLine("TEST");
+            Console.WriteLine(item.ItemId);
+            Console.WriteLine(Resource.Id.nav_my_tracks);
+            switch (item.ItemId)
+            {
+                case Resource.Id.nav_my_tracks:
+                    Console.WriteLine("Open Activity");
+                    break;
+            }
+            return false;
         }
 
         private void CenterMapToCurrentLocation(object sender, EventArgs e)
