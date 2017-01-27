@@ -89,6 +89,9 @@
   <ItemGroup>
     <Compile Include="Exceptions\NoLocationException.cs" />
     <Compile Include="Exceptions\NotOnMapException.cs" />
+    <Compile Include="Fragments\BaseFragment.cs" />
+    <Compile Include="Fragments\MyTracksFragment.cs" />
+    <Compile Include="Fragments\TrackerFragment.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -103,6 +106,12 @@
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="packages.config" />
+    <AndroidResource Include="Resources\layout\drawer_list_item.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Tracker.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml">

@@ -61,16 +61,29 @@ namespace RunningApp.Tracker
             this.track = track;
         }
 
-        public bool AddToTrack = false;
+        protected bool AddToTrack = false;
+        protected bool Paused = false;
+
+        public bool IsTracking()
+        {
+            return (this.Paused) ? true : this.AddToTrack;
+        }
+
+        public bool IsPaused()
+        {
+            return this.Paused;
+        }
 
         public void StartTracking()
         {
+            this.Paused = false;
             this.stopwatch.Start();
             this.AddToTrack = true;
         }
 
         public void StopTracking()
         {
+            this.Paused = false;
             this.stopwatch.Stop();
             this.stopwatch.Reset();
             this.AddToTrack = false;
@@ -78,6 +91,7 @@ namespace RunningApp.Tracker
 
         public void PauseTracking()
         {
+            this.Paused = true;
             this.stopwatch.Stop();
             this.AddToTrack = false;
             this.track.NewSegment();
