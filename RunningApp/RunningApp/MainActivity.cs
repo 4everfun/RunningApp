@@ -13,6 +13,8 @@ using Android.Graphics;
 using System.IO;
 using Android.Util;
 
+using RunningApp.Tracker;
+
 namespace RunningApp
 {
     // Remove the ActionBar
@@ -130,8 +132,7 @@ namespace RunningApp
                 };
                 dialogBox.OnShareClick += delegate (StopTrackingDialog s, EventArgs ea)
                 {
-                    Toast.MakeText(this, "Geklikt op delen!", ToastLength.Short).Show();
-                    ShareImage(StoreScreenShot(TakeScreenShot(this.Map)), this, "RunningApp", "Test bericht");
+                    ShareImage(StoreScreenShot(TakeScreenShot(this.Map)), this, "RunningApp", "Ik heb: " + this.Tracker.GetTotalDistance().ToString() + " meter gelopen in een tijd van: " + this.Tracker.GetTimeSpanTracking().ToString() + " met een gemiddelde van: " + this.Tracker.GetAvergageSpeed() + "km/h");
                     s.Dismiss();
                 };
 
