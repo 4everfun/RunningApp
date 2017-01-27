@@ -5,14 +5,7 @@ using Android.App;
 using Android.Widget;
 using Android.OS;
 
-using RunningApp.Views;
-using RunningApp.Tracker;
-using RunningApp.Exceptions;
-
-using V7Toolbar = Android.Support.V7.Widget.Toolbar;
-using Android.Support.V7.App;
 using Android.Support.V4.Widget;
-using Android.Support.Design.Widget;
 using Android.Views;
 using RunningApp.Fragments;
 
@@ -20,7 +13,7 @@ namespace RunningApp
 {
     // Remove the ActionBar
     [Activity(Label = "RunningApp", MainLauncher = true, Icon = "@drawable/icon", Theme = "@style/Theme.DesignDemo")]
-    public class MainActivity : AppCompatActivity
+    public class MainActivity : Activity
     {
         public Tracker.Tracker Tracker;
         protected DrawerLayout drawerLayout;
