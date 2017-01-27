@@ -130,6 +130,7 @@ namespace RunningApp
                     Toast.MakeText(this, "Geklikt op verwijderen!", ToastLength.Short).Show();
                     s.Dismiss();
                 };
+                //Make screenshot, store it and share it when the 'Share' button is pressed.
                 dialogBox.OnShareClick += delegate (StopTrackingDialog s, EventArgs ea)
                 {
                     ShareImage(StoreScreenShot(TakeScreenShot(this.Map)), this, "RunningApp", "Ik heb: " + this.Tracker.GetTotalDistance().ToString() + " meter gelopen in een tijd van: " + this.Tracker.GetTimeSpanTracking().ToString() + " met een gemiddelde van: " + this.Tracker.GetAvergageSpeed() + "km/h");
@@ -206,7 +207,7 @@ namespace RunningApp
             }
             this.Status.Invalidate();
         }
-               
+        //Take a screenshot of the entire screen.       
         public static Bitmap TakeScreenShot(View view)
         {
             View screenView = view.RootView;
@@ -215,6 +216,7 @@ namespace RunningApp
             screenView.DrawingCacheEnabled = false;
             return bitmap;
         }
+        //Save the screenshot in /storage/emulated/0/RunningApp with the jpeg extension.
         public static Java.IO.File StoreScreenShot(Bitmap picture)
         {
             var folder = Android.OS.Environment.ExternalStorageDirectory + Java.IO.File.Separator + "RunningApp";
@@ -253,6 +255,7 @@ namespace RunningApp
                 return null;
             }
         }
+        //Share screenshot with an intent.
         public static void ShareImage(Java.IO.File file, Activity activity, string subject, string message)
         {
             Android.Net.Uri uri = Android.Net.Uri.FromFile(file);
