@@ -4,22 +4,27 @@ using Android.App;
 using Android.Widget;
 using Android.OS;
 
-using RunningApp.Views;
-using RunningApp.Exceptions;
+using Android.Support.V4.Widget;
+using Android.Views;
+using RunningApp.Fragments;
 
 using SQLite;
 
 namespace RunningApp
 {
     // Remove the ActionBar
-    [Activity(Label = "RunningApp", MainLauncher = true, Icon = "@drawable/icon", Theme = "@android:style/Theme.Material.NoActionBar")]
+    [Activity(Label = "RunningApp", MainLauncher = true, Icon = "@drawable/icon", Theme = "@style/Theme.DesignDemo")]
     public class MainActivity : Activity
     {
-        protected MapView Map;
-        protected Status Status;
-        protected AlertDialog.Builder NoLocationAlert, NotOnMapAlert;
-        protected Tracker.Tracker Tracker;
-        protected Button btnStartStop, btnPause;
+        public Tracker.Tracker Tracker;
+
+        protected const int TRACKER = 0;
+        protected const int MYTRACKS = 1;
+        protected const int ANALYSE = 2;
+        
+        protected DrawerLayout drawerLayout;
+        protected ListView drawerList;
+        protected FrameLayout content;
 
         public SQLiteConnection Database;
 
@@ -32,154 +37,67 @@ namespace RunningApp
             // Set the content view to the main XML file 
             this.SetContentView(Resource.Layout.Main);
 
-            // Bind the MapView to a variable, so it can be used later in the activity
-            this.Map = FindViewById<MapView>(Resource.Id.mapView);
-            this.Status = FindViewById<Status>(Resource.Id.statusView);
+            string[] ListItems = new string[2];
+            ListItems[0] = "Tracker";
+            ListItems[1] = "Mijn Tracks";
+
+            this.drawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            this.drawerList = FindViewById<ListView>(Resource.Id.nav_view);
+            this.drawerList.Adapter = new ArrayAdapter<String>(this, Resource.Layout.drawer_list_item, ListItems);
+            this.drawerList.ItemClick += this.OpenItem;
 
             this.Tracker = new Tracker.Tracker(this);
 
-            this.Map.SetTracker(this.Tracker);
-            this.Status.SetTracker(this.Tracker);
-
-            // Add the click event to the center button
-            FindViewById<ImageButton>(Resource.Id.centerButton).Click += this.CenterMapToCurrentLocation;
-
-            // Add the click event to the start and stop button
-            this.btnStartStop = FindViewById<Button>(Resource.Id.btnStartStop);
-            this.btnStartStop.Click += this.StartStopTracking;
-            this.btnPause = FindViewById<Button>(Resource.Id.btnPause);
-            this.btnPause.Click += this.PauseTracking;
-
-            // Initialize the dialog for the NoLocation Exception
-            this.NoLocationAlert = new AlertDialog.Builder(this);
-            this.NoLocationAlert.SetTitle("Geen locatie beschikbaar");
-            this.NoLocationAlert.SetMessage("Momenteel kunnen wij uw locatie niet vaststellen. Mogelijk heeft u uw locatieservices uitstaan of duurt het nog even voordat we uw locatie kunnen ontvangen.");
-            this.NoLocationAlert.SetNeutralButton("Oké", (senderAlert, arg) => { });
-
-            // Initialize the dialog for the NotOnMap Exception
-            this.NotOnMapAlert = new AlertDialog.Builder(this);
-            this.NotOnMapAlert.SetTitle("Buiten Utrecht");
-            this.NotOnMapAlert.SetMessage("U bevindt zich momenteel buiten het bereik wat deze app aankan. Ga naar Utrecht en omgeving om deze app te gebruiken en uw positie te centeren op de kaart.");
-            this.NotOnMapAlert.SetNeutralButton("Oké", (senderAlert, arg) => { });
+            this.SwitchView(MainActivity.TRACKER);
         }
 
-        private void CenterMapToCurrentLocation(object sender, EventArgs e)
+        public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            try
+            switch (item.ItemId)
             {
-                this.Map.CenterMapToCurrentLocation();
+                case Android.Resource.Id.Home:
+                    drawerLayout.OpenDrawer(Android.Support.V4.View.GravityCompat.Start);
+                    return true;
             }
-            catch (NoLocationException)
-            {
-                Dialog Dialog = this.NoLocationAlert.Create();
-                Dialog.Show();
-            }
-            catch (NotOnMapException)
-            {
-                Dialog Dialog = this.NotOnMapAlert.Create();
-                Dialog.Show();
-            }
+            return base.OnOptionsItemSelected(item);
         }
 
-        protected bool Started = false;
-        protected bool FirstStart = true;
-        private void StartStopTracking(object sender, EventArgs e)
+        private void SwitchView(int item)
         {
-            if (!this.Started)
+            Fragment f;
+            switch (item)
             {
-                if (!this.FirstStart)
-                {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                    alert.SetTitle("Bevestiging verwijdering track");
-                    alert.SetMessage("De track zal worden verwijderd als je een nieuwe run start. Weet je dit zeker?");
-                    alert.SetPositiveButton("Ja", (senderAlert, args) => {
-                        this.StartTracking();
-                        Toast.MakeText(this, "De oude track is verwijderd", ToastLength.Short).Show();
-                    });
-
-                    alert.SetNegativeButton("Nee", (senderAlert, args) => {
-                        Toast.MakeText(this, "Je track is bewaard gebleven", ToastLength.Short).Show();
-                    });
-
-                    Dialog dialog = alert.Create();
-                    dialog.Show();
-                } else
-                {
-                    this.StartTracking();
-                }
-            } else
-            {
-                this.Started = false;
-
-                this.btnStartStop.Text = "Start";
-                this.btnPause.Text = "Pauze";
-                this.btnPause.Enabled = false;
-
-                this.Tracker.StopTracking();
+                case 0:
+                    f = new TrackerFragment();
+                    break;
+                case 1:
+                    f = new MyTracksFragment();
+                    break;
+                case 2:
+                    f = new TrackerFragment();
+                    break;
+                default:
+                    return;
             }
-            this.Status.Invalidate();
+            FragmentTransaction ft = this.FragmentManager.BeginTransaction();
+            ft.Replace(Resource.Id.content, f);
+            ft.Commit();
         }
 
-        private void StartTracking()
+        private void OpenItem(object sender, AdapterView.ItemClickEventArgs ea)
         {
-            try
+            switch (ea.Id)
             {
-                this.Map.CheckCurrentLocation();
+                case 0:
+                    this.SwitchView(MainActivity.TRACKER);
+                    break;
+                case 1:
+                    this.SwitchView(MainActivity.MYTRACKS);
+                    break;
+                default:
+                    return;
             }
-            catch (NoLocationException)
-            {
-                Dialog Dialog = this.NoLocationAlert.Create();
-                Dialog.Show();
-                return;
-            }
-            catch (NotOnMapException)
-            {
-                Dialog Dialog = this.NotOnMapAlert.Create();
-                Dialog.Show();
-                return;
-            }
-
-            this.Tracker.StartNewTrack();
-            this.Tracker.StartTracking();
-
-            this.Started = true;
-            this.FirstStart = false;
-
-            this.btnStartStop.Text = "Stop";
-            this.btnPause.Enabled = true;
-        }
-
-        protected bool Paused = false;
-        private void PauseTracking(object sender, EventArgs ea)
-        {
-            if (this.Paused)
-            {
-                this.btnPause.Text = "Pauze";
-                this.Paused = false;
-
-                try
-                {
-                    this.Map.CheckCurrentLocation();
-                }
-                catch (NoLocationException)
-                {
-                    Dialog Dialog = this.NoLocationAlert.Create();
-                    Dialog.Show();
-                }
-                catch (NotOnMapException)
-                {
-                    Dialog Dialog = this.NotOnMapAlert.Create();
-                    Dialog.Show();
-                }
-
-                this.Tracker.StartTracking();
-            } else
-            {
-                this.btnPause.Text = "Doorgaan";
-                this.Paused = true;
-                this.Tracker.PauseTracking();
-            }
-            this.Status.Invalidate();
+            this.drawerLayout.CloseDrawer(this.drawerList);
         }
     }
 }
