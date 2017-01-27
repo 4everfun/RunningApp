@@ -133,7 +133,7 @@ namespace RunningApp
                 //Make screenshot, store it and share it when the 'Share' button is pressed.
                 dialogBox.OnShareClick += delegate (StopTrackingDialog s, EventArgs ea)
                 {
-                    ShareImage(StoreScreenShot(TakeScreenShot(this.Map)), this, "RunningApp", "Ik heb: " + this.Tracker.GetTotalDistance().ToString() + " meter gelopen in een tijd van: " + this.Tracker.GetTimeSpanTracking().ToString() + " met een gemiddelde van: " + this.Tracker.GetAvergageSpeed() + "km/h");
+                    ShareImage(StoreScreenShot(TakeScreenShot(this.Map)), this, "RunningApp", "Ik heb " + this.Tracker.GetTotalDistance().ToString() + " meter gelopen in een tijd van " + this.Tracker.GetTimeSpanTracking().ToString() + " met een gemiddelde van " + this.Tracker.GetAvergageSpeed() + "km/h");
                     s.Dismiss();
                 };
 
