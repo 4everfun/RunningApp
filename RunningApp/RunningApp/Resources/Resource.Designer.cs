@@ -57,6 +57,7 @@ namespace RunningApp
 			// aapt resource value: 0x7f040007
 			public const int abc_slide_in_top = 2130968583;
 			
+
 			// aapt resource value: 0x7f040008
 			public const int abc_slide_out_bottom = 2130968584;
 			
@@ -75,6 +76,16 @@ namespace RunningApp
 			// aapt resource value: 0x7f04000d
 			public const int design_fab_in = 2130968589;
 			
+			// aapt resource value: 0x7f050006
+			public const int textView1 = 2131034118;
+			
+			// aapt resource value: 0x7f050007
+			public const int textView2 = 2131034119;
+			
+			static Id()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
 			// aapt resource value: 0x7f04000e
 			public const int design_fab_out = 2130968590;
 			
@@ -84,7 +95,13 @@ namespace RunningApp
 			// aapt resource value: 0x7f040010
 			public const int design_snackbar_out = 2130968592;
 			
+			// aapt resource value: 0x7f030001
+			public const int StopTrackingDialog = 2130903041;
+			
+			static Layout()
+
 			static Animation()
+
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
 			}

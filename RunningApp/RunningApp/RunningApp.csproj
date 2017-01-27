@@ -118,6 +118,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\StopTrackingDialog.cs" />
     <Compile Include="Database\Database.cs" />
     <Compile Include="Database\TrackModel.cs" />
     <Compile Include="Exceptions\NoLocationException.cs" />
@@ -139,6 +140,7 @@
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
+    <AndroidResource Include="Resources\layout\StopTrackingDialog.axml"/>
     <None Include="packages.config" />
     <AndroidResource Include="Resources\layout\drawer_list_item.axml">
       <SubType>Designer</SubType>
