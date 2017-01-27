@@ -9,9 +9,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::Android.Runtime.ResourceDesignerAttribute("Kaart.Resource", IsApplication=false)]
+[assembly: global::Android.Runtime.ResourceDesignerAttribute("SQLLite.Resource", IsApplication=false)]
 
-namespace Kaart
+namespace SQLLite
 {
 	
 	

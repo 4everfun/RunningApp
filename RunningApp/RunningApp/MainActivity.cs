@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Timers;
 
 using Android.App;
 using Android.Widget;
@@ -9,6 +8,8 @@ using Android.Support.V4.Widget;
 using Android.Views;
 using RunningApp.Fragments;
 
+using SQLite;
+
 namespace RunningApp
 {
     // Remove the ActionBar
@@ -16,17 +17,22 @@ namespace RunningApp
     public class MainActivity : Activity
     {
         public Tracker.Tracker Tracker;
-        protected DrawerLayout drawerLayout;
-        protected ListView drawerList;
-        protected FrameLayout content;
 
         protected const int TRACKER = 0;
         protected const int MYTRACKS = 1;
         protected const int ANALYSE = 2;
+        
+        protected DrawerLayout drawerLayout;
+        protected ListView drawerList;
+        protected FrameLayout content;
+
+        public SQLiteConnection Database;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+
+            this.Database = RunningApp.Database.Database.NewInstance();
 
             // Set the content view to the main XML file 
             this.SetContentView(Resource.Layout.Main);
