@@ -1,1 +1,21 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <TextView
+        android:id="@+id/Heading"
+        android:text="Mijn opgeslagen tracks"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#00000000"
+        android:textSize="20dp"
+        android:textColor="#FFFFFF"
+        android:textStyle="italic"
+        android:padding="5dp" />
+    <ListView
+        android:id="@+id/List"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:cacheColorHint="#FFDAFF7F" />
+</LinearLayout>
