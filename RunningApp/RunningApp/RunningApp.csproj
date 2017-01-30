@@ -16,11 +16,12 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v7.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <AndroidTlsProvider></AndroidTlsProvider>
+    <AndroidTlsProvider>
+    </AndroidTlsProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -140,7 +141,7 @@
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
-    <AndroidResource Include="Resources\layout\StopTrackingDialog.axml"/>
+    <AndroidResource Include="Resources\layout\StopTrackingDialog.axml" />
     <None Include="packages.config" />
     <AndroidResource Include="Resources\layout\drawer_list_item.axml">
       <SubType>Designer</SubType>
@@ -156,8 +157,8 @@
     <AndroidResource Include="Resources\Menu\menu.xml" />
     <AndroidResource Include="Resources\values\styles.xml" />
     <AndroidResource Include="Resources\values\colors.xml" />
-    <AndroidResource Include="Resources\layout\Mijntracks.xml" />
-    <AndroidResource Include="Resources\layout\Rowtrack.xml" />
+    <AndroidResource Include="Resources\layout\Mijntracks.axml" />
+    <AndroidResource Include="Resources\layout\Rowtrack.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Strings.xml" />
