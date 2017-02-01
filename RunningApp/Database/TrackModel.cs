@@ -14,6 +14,7 @@ namespace RunningApp.Database
 {
     public class TrackModel
     {
+        // Nullable int for AutoIncrement
         [PrimaryKey, AutoIncrement]
         public int? ID { get; set; }
         public string Name { get; set; }
@@ -48,6 +49,14 @@ namespace RunningApp.Database
             this.Track = JsonConvert.SerializeObject(Track);
         }
 
+        /// <summary>
+        /// Only for use in the case of a fake track
+        /// </summary>
+        public void SetRawTrack (string Track)
+        {
+            this.Track = Track;
+        }
+
         public Track GetTrack()
         {
             if (this.Track == null) return new Track();
@@ -57,26 +66,6 @@ namespace RunningApp.Database
         public DateTime GetDateTime()
         {
             return this.GetTrack().GetFirstDateTime();
-        }
-
-        public Bitmap CreateMapImage(View view)
-        {
-            //Define a bitmap with the same size as the view
-            Bitmap returnedBitmap = Bitmap.CreateBitmap(view.Width, view.Height, Bitmap.Config.Argb8888);
-            //Bind a canvas to it
-            Canvas canvas = new Canvas(returnedBitmap);
-            //Get the view's background
-            Drawable bgDrawable = view.Background;
-            if (bgDrawable != null)
-                //has background drawable, then draw it on the canvas
-                bgDrawable.Draw(canvas);
-            else
-                //does not have background drawable, then draw white background on the canvas
-                canvas.DrawColor(Color.White);
-            // draw the view on the canvas
-            view.Draw(canvas);
-            //return the bitmap
-            return returnedBitmap;
         }
     }
 }
