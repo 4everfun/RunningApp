@@ -1,13 +1,10 @@
 using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using Java.IO;
 
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -18,10 +15,7 @@ using RunningApp.Dialogs;
 using Android.Graphics;
 using RunningApp.Database;
 using RunningApp.Parcels;
-
-using SQLite;
-using SQLitePCL;
-using Mono.Data.Sqlite;
+using System.IO;
 
 namespace RunningApp.Fragments
 {
@@ -83,6 +77,24 @@ namespace RunningApp.Fragments
 
         private void CenterMapToCurrentLocation(object sender, EventArgs e)
         {
+            TrackModel tm = this.Tracker.GetOrInstantiateTrackModel();
+            Bitmap res = tm.CreateMapImage(this.Map);
+
+            Java.IO.File file = new Java.IO.File(this.Context.CacheDir, new Random().Next() + ".png");
+            FileOutputStream fOut = new FileOutputStream(file);
+            fOut.Flush();
+            fOut.Close();
+            file.SetReadable(true, false);
+            Intent i = new Intent(Android.Content.Intent.ActionSend);
+            i.AddFlags(ActivityFlags.GrantReadUriPermission);
+            i.SetFlags(ActivityFlags.NewTask);
+            i.PutExtra(Intent.ExtraStream, Android.Net.Uri.FromFile(file));
+
+            System.Console.WriteLine(Android.Net.Uri.FromFile(file));
+
+            i.SetType("image/png");
+            this.StartActivity(i);
+
             try
             {
                 this.Map.CenterMapToCurrentLocation();
@@ -229,8 +241,8 @@ namespace RunningApp.Fragments
             dialogBox.TrackNameDialogSave += (se, e) => {
                 TrackModel tm = this.Tracker.GetOrInstantiateTrackModel();
                 tm.Name = e.TrackName;
-                Console.WriteLine("____FAKETRACKGENERATIOSTRING____");
-                Console.WriteLine(tm.Track);
+                System.Console.WriteLine("____FAKETRACKGENERATIOSTRING____");
+                System.Console.WriteLine(tm.Track);
                 Database.Database.GetInstance().InsertOrReplace(tm);
                 this.Tracker.StopTracking();
                 this.UpdateStartStopPauseButton();

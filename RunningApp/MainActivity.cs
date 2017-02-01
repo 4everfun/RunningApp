@@ -3,22 +3,24 @@
 using Android.App;
 using Android.Widget;
 using Android.OS;
-
 using Android.Support.V4.Widget;
+using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Views;
+
+using SQLite;
+
 using RunningApp.Fragments;
 
 using RunningApp.Database;
 using RunningApp.Parcels;
-using SQLite;
-using Mono.Data.Sqlite;
 using RunningApp.Tracker;
 
 namespace RunningApp
 {
     // Remove the ActionBar
-    [Activity(Label = "RunningApp", MainLauncher = true, Icon = "@drawable/icon", Theme = "@style/Theme.DesignDemo")]
-    public class MainActivity : Activity
+    [Activity(Label = "RunningApp", MainLauncher = true, Icon = "@drawable/icon", Theme = "@style/Theme.RunningApp")]
+    public class MainActivity : AppCompatActivity
     {
         public Tracker.Tracker Tracker { get; protected set; }
 
@@ -45,6 +47,14 @@ namespace RunningApp
             this.drawerList = FindViewById<ListView>(Resource.Id.nav_view);
             this.drawerList.Adapter = new ArrayAdapter<String>(this, Resource.Layout.drawer_list_item, ListItems);
             this.drawerList.ItemClick += this.OpenItem;
+
+            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            this.SetSupportActionBar(toolbar);
+            ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, this.drawerLayout, Resource.Drawable.ic_menu, Resource.Drawable.ic_menu);
+            this.drawerLayout.AddDrawerListener(drawerToggle);
+            this.SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            this.SupportActionBar.SetHomeButtonEnabled(true);
+            drawerToggle.SyncState();
 
             this.Tracker = new Tracker.Tracker(this);
 
