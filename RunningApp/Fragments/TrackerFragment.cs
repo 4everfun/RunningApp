@@ -140,7 +140,7 @@ namespace RunningApp.Fragments
 
                 dialogBox.OnDeleteClick += (s, ea) =>
                 {
-                    this.Tracker.StartNewTrack();
+                    this.Tracker.StopTracking();
                     this.UpdateStartStopPauseButton();
 
                     Toast.MakeText(this.Context, "De track is verwijderd.", ToastLength.Short).Show();
@@ -155,6 +155,8 @@ namespace RunningApp.Fragments
 
                 dialogBox.OnClose += (s, ea) => {
                     this.Tracker.StartTracking();
+                    this.UpdateStartStopPauseButton();
+                    s.Dismiss();
                 };
             }
         }
