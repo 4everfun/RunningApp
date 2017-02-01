@@ -43,7 +43,6 @@ namespace RunningApp.Adapters
                 TextView dateTime = view.FindViewById<TextView>(Resource.Id.TrackDateTime);
                 Button open = view.FindViewById<Button>(Resource.Id.btnOpen);
                 Button analyse = view.FindViewById<Button>(Resource.Id.btnAnalyse);
-                Button share = view.FindViewById<Button>(Resource.Id.btnShare);
                 Button delete = view.FindViewById<Button>(Resource.Id.btnDelete);
 
                 name.Text = track.Name;
@@ -53,7 +52,6 @@ namespace RunningApp.Adapters
 
                 open.Click += (sender, ea) => this.OnOpenClick(sender, e);
                 analyse.Click += (sender, ea) => this.OnAnalyseClick(sender, e);
-                share.Click += (sender, ea) => this.OnShareClick(sender, e);
                 delete.Click += (sender, ea) => this.OnDeleteClick(sender, e);
             }
 

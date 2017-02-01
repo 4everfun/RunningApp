@@ -74,6 +74,7 @@ namespace RunningApp.Fragments
             Bundle b = this.Arguments;
             TrackerParcel tp = (TrackerParcel)b.GetParcelable("Tracker");
             this.Tracker = tp.Tracker;
+            this.Arguments.Remove("Tracker");
         }
 
         private void CenterMapToCurrentLocation(object sender, EventArgs e)

@@ -22,6 +22,7 @@ namespace RunningApp.Fragments
     public class MyTracksFragment : BaseFragment
     {
         protected ListView List;
+        protected List<TrackModel> Tracks;
 
         public MyTracksFragment() : base()
         {
@@ -35,9 +36,11 @@ namespace RunningApp.Fragments
 
             Bundle b = this.Arguments;
             MyTracksParcel tp = (MyTracksParcel)b.GetParcelable("Tracks");
+            this.Tracks = tp.Tracks;
+            this.Arguments.Remove("Tracks");
 
             this.List = view.FindViewById<ListView>(Resource.Id.MyTracksList);
-            MyTracksAdapter MyTracksAdapter = new MyTracksAdapter(this.Context, Resource.Layout.MyTracksRow, tp.Tracks);
+            MyTracksAdapter MyTracksAdapter = new MyTracksAdapter(this.Context, Resource.Layout.MyTracksRow, this.Tracks);
             this.List.Adapter = MyTracksAdapter;
 
             MainActivity a = (MainActivity)this.Context;

@@ -32,6 +32,8 @@ namespace RunningApp.Fragments
 
         PlotView Graph;
 
+        protected Track Track;
+
         public AnalyseFragment() : base()
         {
         }
@@ -44,6 +46,8 @@ namespace RunningApp.Fragments
 
             Bundle b = this.Arguments;
             TrackParcel tp = (TrackParcel)b.GetParcelable("Track");
+            this.Track = tp.Track;
+            this.Arguments.Remove("Track");
 
             RadioGroup rgGraph = view.FindViewById<RadioGroup>(Resource.Id.rgGraph);
             rgGraph.CheckedChange += this.UpdateGraphType;
@@ -68,11 +72,11 @@ namespace RunningApp.Fragments
             switch (type)
             {
                 case Resource.Id.rbDistanceTraveledGraph:
-                    this.Graph.Model = this.CreateDistanceTraveledModel(tp.Track);
+                    this.Graph.Model = this.CreateDistanceTraveledModel(this.Track);
                     break;
                 case Resource.Id.rbSpeedGraph:
                 default:
-                    this.Graph.Model = this.CreateSpeedModel(tp.Track);
+                    this.Graph.Model = this.CreateSpeedModel(this.Track);
                     break;
             }
 
