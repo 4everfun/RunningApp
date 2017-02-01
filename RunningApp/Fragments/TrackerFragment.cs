@@ -229,6 +229,8 @@ namespace RunningApp.Fragments
             dialogBox.TrackNameDialogSave += (se, e) => {
                 TrackModel tm = this.Tracker.GetOrInstantiateTrackModel();
                 tm.Name = e.TrackName;
+                Console.WriteLine("____FAKETRACKGENERATIOSTRING____");
+                Console.WriteLine(tm.Track);
                 Database.Database.GetInstance().InsertOrReplace(tm);
                 this.Tracker.StopTracking();
                 this.UpdateStartStopPauseButton();
