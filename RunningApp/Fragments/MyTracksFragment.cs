@@ -48,6 +48,11 @@ namespace RunningApp.Fragments
                 a.SwitchView(MainActivity.TRACKER);
             };
 
+            MyTracksAdapter.OnAnalyseClick += (s, ea) =>
+            {
+                a.LoadAnalyse(ea.TrackModel.GetTrack());
+            };
+
             MyTracksAdapter.OnDeleteClick += (s, ea) =>
             {
                 new AlertDialog.Builder(this.Context)

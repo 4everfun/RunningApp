@@ -430,17 +430,17 @@ namespace RunningApp.Views
         private void DrawTrack(Canvas c)
         {
             if (this.tracker == null) return;
-            if (this.tracker.track.CountSegments() <= 0) return;
+            if (this.tracker.track.segments.Count <= 0) return;
 
-            foreach(Segment segment in this.tracker.track.GetSegments())
+            foreach(Segment segment in this.tracker.track.segments)
             {
-                if (segment.CountPoints() <= 0) continue;
+                if (segment.points.Count <= 0) continue;
 
                 try
                 {
                     Path path = new Path();
 
-                    List<PointF> points = PointsToRD(segment.GetPoints());
+                    List<PointF> points = PointsToRD(segment.GetLocations());
 
                     float FirstX = (this.RD2Bitmap(points[0]).X + this.MapOffsetX) * this.MapScale + this.Width / 2;
                     float FirstY = (this.RD2Bitmap(points[0]).Y + this.MapOffsetY) * this.MapScale + this.Height / 2;

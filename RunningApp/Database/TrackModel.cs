@@ -47,8 +47,6 @@ namespace RunningApp.Database
 
         public Track GetTrack()
         {
-            Console.WriteLine("TESTTT");
-            Console.WriteLine(this.Track);
             if (this.Track == null) return new Track();
             return JsonConvert.DeserializeObject<Track>(this.Track);
         }

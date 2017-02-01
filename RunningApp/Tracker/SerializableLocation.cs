@@ -45,5 +45,10 @@ namespace RunningApp.Tracker
             this.Time = l.Time;
             this.Location = l;
         }
+
+        public DateTime GetDateTime()
+        {
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(this.Time).ToLocalTime();
+        }
     }
 }

@@ -73,12 +73,12 @@ namespace RunningApp.Views
             p.TextAlign = Paint.Align.Center;
 
             c.DrawText("U heeft al ", this.Width / 2, startX, p);
-            c.DrawText((int)this.tracker.GetTotalDistance() + "m gelopen", this.Width/2, startX + 50, p);
+            c.DrawText((int)this.tracker.track.GetTotalRunningDistance() + "m gelopen", this.Width/2, startX + 50, p);
 
             p.TextAlign = Paint.Align.Right;
 
             c.DrawText("Dat is gemiddeld", this.Width - 10, startX, p);
-            c.DrawText((int)this.tracker.GetAvergageSpeed() + "km/h", this.Width - 10, startX + 50, p);
+            c.DrawText((int)this.tracker.track.GetAvergageSpeed() + "km/h", this.Width - 10, startX + 50, p);
         }
 
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)

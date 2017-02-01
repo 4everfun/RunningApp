@@ -139,12 +139,15 @@
     <Compile Include="Exceptions\NotOnMapException.cs" />
     <Compile Include="Fragments\BaseFragment.cs" />
     <Compile Include="Adapters\MyTracksEventArgs.cs" />
+    <Compile Include="Fragments\AnalyseFragment.cs" />
     <Compile Include="Fragments\MyTracksFragment.cs" />
     <Compile Include="Fragments\TrackerFragment.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Parcels\Creators\MyTracksParcelCreator.cs" />
+    <Compile Include="Parcels\Creators\TrackParcelCreator.cs" />
     <Compile Include="Parcels\Creators\TrackerParcelCreator.cs" />
     <Compile Include="Parcels\MyTracksParcel.cs" />
+    <Compile Include="Parcels\TrackParcel.cs" />
     <Compile Include="Parcels\TrackerParcel.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -169,6 +172,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\TrackNameDialog.axml" />
+    <AndroidResource Include="Resources\layout\Analyse.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml">

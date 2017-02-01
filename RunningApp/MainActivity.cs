@@ -12,6 +12,7 @@ using RunningApp.Database;
 using RunningApp.Parcels;
 using SQLite;
 using Mono.Data.Sqlite;
+using RunningApp.Tracker;
 
 namespace RunningApp
 {
@@ -67,22 +68,31 @@ namespace RunningApp
             Bundle b = new Bundle();
             switch (item)
             {
-                case 0:
+                case MainActivity.TRACKER:
                     f = new TrackerFragment();
                     b.PutParcelable("Tracker", new TrackerParcel(this.Tracker));
                     f.Arguments = b;
                     break;
-                case 1:
+                case MainActivity.MYTRACKS:
                     f = new MyTracksFragment();
                     b.PutParcelable("Tracks", new MyTracksParcel(TrackModel.GetAll(Database.Database.GetInstance())));
                     f.Arguments = b;
                     break;
-                case 2:
-                    f = new TrackerFragment();
-                    break;
                 default:
                     return;
             }
+            FragmentTransaction ft = this.FragmentManager.BeginTransaction();
+            ft.Replace(Resource.Id.content, f);
+            ft.Commit();
+        }
+
+        public void LoadAnalyse(Track Track)
+        {
+            Fragment f = new AnalyseFragment();
+            Bundle b = new Bundle();
+            b.PutParcelable("Track", new TrackParcel(Track));
+            f.Arguments = b;
+
             FragmentTransaction ft = this.FragmentManager.BeginTransaction();
             ft.Replace(Resource.Id.content, f);
             ft.Commit();

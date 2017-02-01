@@ -131,25 +131,10 @@ namespace RunningApp.Tracker
             return this.TrackModel;
         }
 
-        public TimeSpan GetTrackTimeSpan()
-        {
-            return this.track.GetTotalTimeSpan();
-        }
-
         public TimeSpan GetTimeSpanTracking()
         {
             if (this.Extendable) return this.stopwatch.Elapsed;
-            return this.GetTrackTimeSpan();
-        }
-
-        public float GetTotalDistance()
-        {
-            return this.track.GetTotalDistance();
-        }
-
-        public float GetAvergageSpeed()
-        {
-            return (float)((double)(this.GetTotalDistance() / 1000) / this.GetTimeSpanTracking().TotalHours);
+            return this.track.GetTotalRunningTimeSpan();
         }
 
         protected void TrackLocation(Location location)

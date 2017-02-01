@@ -155,7 +155,7 @@ namespace RunningApp.Fragments
                 // Make screenshot, store it and share it when the 'Share' button is pressed.
                 dialogBox.OnShareClick += (s, ea) => 
                 {
-                    ShareImage(StoreScreenShot(TakeScreenShot(this.Map)), (Activity) this.Context, "RunningApp", "Ik heb " + this.Tracker.GetTotalDistance().ToString() + " meter gelopen in een tijd van " + this.Tracker.GetTrackTimeSpan().ToString() + " met een gemiddelde van " + this.Tracker.GetAvergageSpeed() + "km/h");
+                    ShareImage(StoreScreenShot(TakeScreenShot(this.Map)), (Activity) this.Context, "RunningApp", "Ik heb " + this.Tracker.track.GetTotalRunningDistance().ToString() + " meter gelopen in een tijd van " + this.Tracker.track.GetTotalRunningTimeSpan().ToString() + " met een gemiddelde van " + this.Tracker.track.GetAvergageSpeed() + "km/h");
                 };
 
                 dialogBox.OnClose += (s, ea) => {
