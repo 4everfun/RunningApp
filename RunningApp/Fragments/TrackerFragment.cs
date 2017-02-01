@@ -16,6 +16,7 @@ using Android.Graphics;
 using RunningApp.Database;
 using RunningApp.Parcels;
 using System.IO;
+using Android.Support.V4.Content;
 
 namespace RunningApp.Fragments
 {
@@ -77,24 +78,6 @@ namespace RunningApp.Fragments
 
         private void CenterMapToCurrentLocation(object sender, EventArgs e)
         {
-            TrackModel tm = this.Tracker.GetOrInstantiateTrackModel();
-            Bitmap res = tm.CreateMapImage(this.Map);
-
-            Java.IO.File file = new Java.IO.File(this.Context.CacheDir, new Random().Next() + ".png");
-            FileOutputStream fOut = new FileOutputStream(file);
-            fOut.Flush();
-            fOut.Close();
-            file.SetReadable(true, false);
-            Intent i = new Intent(Android.Content.Intent.ActionSend);
-            i.AddFlags(ActivityFlags.GrantReadUriPermission);
-            i.SetFlags(ActivityFlags.NewTask);
-            i.PutExtra(Intent.ExtraStream, Android.Net.Uri.FromFile(file));
-
-            System.Console.WriteLine(Android.Net.Uri.FromFile(file));
-
-            i.SetType("image/png");
-            this.StartActivity(i);
-
             try
             {
                 this.Map.CenterMapToCurrentLocation();
